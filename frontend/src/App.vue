@@ -9,20 +9,24 @@
           <router-view></router-view>
         </v-content>
 
+        <!-- Go to top -->
+        <app-fab></app-fab>
+
       </v-app>
     </div>
-    <router-view/>
   </div>
 </template>
 
 <script>
 
   import AppToolbar from './components/AppToolbar'
+  import AppFab from './components/AppFab'
 
   export default {
     name: 'app',
     components: {
       AppToolbar,
+      AppFab,
     }
   }
 </script>
@@ -32,8 +36,6 @@
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
   }
 </style>

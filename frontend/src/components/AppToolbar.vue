@@ -95,7 +95,8 @@
     computed: {
 
       logo() {
-        return '/images/logo.png'
+        // return '/images/logo.png'
+        return '/images/wallet.png'
       },
       avatar() {
         return '/images/avatar/btc.jpeg'
