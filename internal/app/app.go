@@ -49,7 +49,7 @@ func (a *App) setupRouter() {
 		router Router
 		path   string
 	}{
-		{router: handler.NewAuthHandler(a.db), path: "/auth"},
+		{router: handler.NewAuthHandler(s), path: "/auth"},
 		{router: handler.NewAccountHandler(a.db), path: "/accounts"},
 		{router: handler.NewCategoryHandler(s), path: "/categories"},
 	}

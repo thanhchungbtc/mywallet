@@ -31,7 +31,9 @@ func (h *CategoryHandler) RegisterRoutes(r gin.IRouter) {
 	r.POST("", h.create)
 	r.Group("/:id").
 		Use(h.withCategoryByID).
-		GET("", h.retrieve)
+		GET("", h.retrieve).
+		PUT("", h.update).
+		DELETE("", h.delete)
 }
 
 // list handles /GET api/categories
@@ -97,6 +99,7 @@ func (h *CategoryHandler) update(c *gin.Context) {
 	c.JSON(200, serializer.NewCategoryResponse(category))
 }
 
+// delete handles /DELETE /api/categories/:id
 func (h *CategoryHandler) delete(c *gin.Context) {
 	category := h.mustGetCategory(c)
 	if err := h.service.Category.Delete(category); err != nil {
@@ -107,11 +110,13 @@ func (h *CategoryHandler) delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+// retrieve handles /GET /api/categories/:id
 func (h *CategoryHandler) retrieve(c *gin.Context) {
 	object := h.mustGetCategory(c)
 	c.JSON(200, serializer.NewCategoryResponse(object))
 }
 
+// mustGetCategory is a helper function
 func (h *CategoryHandler) mustGetCategory(c *gin.Context) *model.Category {
 	object, ok := c.MustGet(categoryKey).(*model.Category)
 	if !ok {

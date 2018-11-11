@@ -3,30 +3,26 @@ package handler
 import (
 	"regexp"
 
-	"github.com/pkg/errors"
-
-	"golang.org/x/crypto/bcrypt"
-
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
-	"github.com/thanhchungbtc/mywallet/internal/database"
 	"github.com/thanhchungbtc/mywallet/internal/model"
+
+	"github.com/thanhchungbtc/mywallet/internal/service"
+
+	"github.com/gin-gonic/gin"
+	"github.com/thanhchungbtc/mywallet/internal/app/serializer"
 )
 
 var (
-	SecretKey        = []byte("secret")
-	tokenRegexp      = regexp.MustCompile(`^(?:T|t)oken (\S+$)`)
-	getSecretKeyFunc = func(token *jwt.Token) (interface{}, error) {
-		return SecretKey, nil
-	}
+	tokenRegexp = regexp.MustCompile(`^(?:T|t)oken (\S+$)`)
+	authKey     = "MW_AUTH"
+	tokenKey    = "MW_TOKEN"
 )
 
 type AuthHandler struct {
-	db *database.DB
+	service *service.Service
 }
 
-func NewAuthHandler(db *database.DB) *AuthHandler {
-	return &AuthHandler{db: db}
+func NewAuthHandler(service *service.Service) *AuthHandler {
+	return &AuthHandler{service}
 }
 
 func (h *AuthHandler) RegisterRoutes(r gin.IRouter) {
@@ -34,114 +30,82 @@ func (h *AuthHandler) RegisterRoutes(r gin.IRouter) {
 		POST("/login", h.login).
 		POST("/register", h.register)
 
+	sub := r.Group("")
+	sub.Use(h.withAuth).
+		POST("/profile", h.profile)
+
 }
+
 func (h *AuthHandler) login(c *gin.Context) {
-	var req loginRequest
+	var req serializer.LoginRequest
 	var err error
 	if err = c.ShouldBindJSON(&req); err != nil {
 		abortWithError(c, 400, err)
 		return
 	}
-	var user model.User
-	if res := h.db.Where("username = ?", req.Username).First(&user); res.Error != nil {
-		if res.RecordNotFound() {
-			abortWithError(c, 400, ErrUsernameOrPasswordInvalid)
-			return
-		}
-		abortSystemError(c, res.Error)
-		return
-	}
-	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		abortWithError(c, 401, err)
-		return
-	}
-	response, err := newAuthResponse(&user)
-	if err != nil {
-		abortWithError(c, 500, err)
+
+	var tokenStr string
+	var user *model.User
+	if tokenStr, user, err = h.service.Auth.Login(req.Username, req.Password); err != nil {
+		abortWithError(c, 400, err)
 		return
 	}
 
-	c.JSON(200, response)
+	c.JSON(200, serializer.NewAuthResponse(tokenStr, user))
 }
 
 func (h *AuthHandler) register(c *gin.Context) {
-	var req registerRequest
+	var req serializer.RegisterRequest
 	var err error
+	var tokenStr string
 	if err = c.ShouldBindJSON(&req); err != nil {
 		abortWithError(c, 400, err)
 		return
 	}
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-	if err != nil {
-		abortWithError(c, 500, errors.Wrap(ErrSystemError, err.Error()))
+
+	user := req.ToUser()
+	if tokenStr, err = h.service.Auth.Register(user); err != nil {
+		abortWithError(c, 400, err)
 		return
 	}
-	user := req.user(string(hashedPassword))
+	c.JSON(200, serializer.NewAuthResponse(tokenStr, user))
+}
 
-	if err = h.db.Save(user).Error; err != nil {
-		abortWithError(c, 500, errors.Wrap(ErrSystemError, err.Error()))
+func (h *AuthHandler) withAuth(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		abortUnauthorize(c)
 		return
 	}
 
-	response, err := newAuthResponse(user)
-	if err != nil {
-		abortWithError(c, 500, errors.Wrap(ErrSystemError, err.Error()))
+	matches := tokenRegexp.FindStringSubmatch(authHeader)
+	if len(matches) != 2 {
+		abortUnauthorize(c)
 		return
 	}
 
-	c.JSON(200, response)
-}
-
-func generateJwtToken(user *model.User) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims{
-		User:           userResponse{Username: user.Username, UserID: user.ID},
-		StandardClaims: jwt.StandardClaims{},
-	})
-
-	return token.SignedString(SecretKey)
-}
-
-type loginRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
-type registerRequest struct {
-	Email                string `json:"email" binding:"required,email"`
-	Username             string `json:"username" binding:"required"`
-	Password             string `json:"password" binding:"required"`
-	PasswordConfirmation string `json:"password_confirmation" binding:"required,eqfield=Password"`
-}
-
-func (r registerRequest) user(hashedPassword string) *model.User {
-	return &model.User{
-		Username: r.Username,
-		Email:    r.Email,
-		Password: hashedPassword,
+	tokenStr := matches[1]
+	if tokenStr == "" {
+		abortUnauthorize(c)
+		return
 	}
-}
 
-type userResponse struct {
-	Username string `json:"username"`
-	UserID   uint   `json:"user_id"`
-}
-type claims struct {
-	jwt.StandardClaims
-	User userResponse `json:"user"`
-}
+	claims, err := h.service.Auth.ParseToken(tokenStr)
 
-type authResponse struct {
-	Token string       `json:"token"`
-	User  userResponse `json:"user"`
-}
-
-func newAuthResponse(user *model.User) (*authResponse, error) {
-	tokenStr, err := generateJwtToken(user)
 	if err != nil {
-		return nil, err
+		abortUnauthorize(c, err)
+		return
 	}
-	return &authResponse{
-		Token: tokenStr,
-		User:  userResponse{Username: user.Username, UserID: user.ID},
-	}, nil
+
+	c.Set(authKey, claims)
+	c.Set(tokenKey, tokenStr)
+}
+
+func (h *AuthHandler) profile(c *gin.Context) {
+	auth, ok := c.MustGet(authKey).(*service.Claims)
+	if !ok {
+		abortUnauthorize(c)
+		return
+	}
+	c.JSON(200, auth)
 }

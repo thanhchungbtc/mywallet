@@ -14,27 +14,27 @@ type Category interface {
 
 type category struct{ DB *database.DB }
 
-func (c category) Save(category *model.Category) error {
-	return c.DB.Save(category).Error
+func (s category) Save(category *model.Category) error {
+	return s.DB.Save(category).Error
 }
 
-func (c category) Delete(category *model.Category) error {
-	return c.DB.Delete(category).Error
+func (s category) Delete(category *model.Category) error {
+	return s.DB.Delete(category).Error
 }
 
-func (c category) All() ([]*model.Category, error) {
+func (s category) All() ([]*model.Category, error) {
 	var objects []*model.Category
-	if err := c.DB.Find(&objects).Error; err != nil {
+	if err := s.DB.Find(&objects).Error; err != nil {
 		return nil, err
 	}
 	return objects, nil
 }
 
-func (c *category) ByID(id int) (*model.Category, error) {
+func (s *category) ByID(id int) (*model.Category, error) {
 	var object model.Category
-	if err := c.DB.
+	if err := s.DB.
 		Where("id = ?", id).
-		Find(&object).Error; err != nil {
+		First(&object).Error; err != nil {
 		return nil, err
 	}
 	return &object, nil

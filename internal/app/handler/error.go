@@ -10,17 +10,24 @@ import (
 )
 
 var (
-	ErrUsernameOrPasswordInvalid = errors.New("Username or password is not valid")
-	ErrSystemError               = errors.New("Oops...An error occurred")
+	ErrSystemError = errors.New("Oops...An error occurred")
 )
 
-func abortWithError(c *gin.Context, code int, err error) {
+func abortWithError(c *gin.Context, code int, err ...error) {
 	log.Printf("%+v", err)
-	c.AbortWithStatusJSON(code, gin.H{"error": err.Error()})
+	if err != nil {
+		c.AbortWithStatusJSON(code, gin.H{"error": err[0].Error()})
+		return
+	}
+	c.AbortWithStatus(code)
 }
 
 func abortSystemError(c *gin.Context, err error) {
 	abortWithError(c, 500, errors.Wrap(ErrSystemError, err.Error()))
+}
+
+func abortUnauthorize(c *gin.Context, err ...error) {
+	abortWithError(c, 401, err...)
 }
 
 func assertIsJSONFormat(t *testing.T, value interface{}) {
