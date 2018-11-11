@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"encoding/json"
+	"testing"
+
 	"github.com/fragmenta/mux/log"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
@@ -18,4 +21,10 @@ func abortWithError(c *gin.Context, code int, err error) {
 
 func abortSystemError(c *gin.Context, err error) {
 	abortWithError(c, 500, errors.Wrap(ErrSystemError, err.Error()))
+}
+
+func assertIsJSONFormat(t *testing.T, value interface{}) {
+	if _, err := json.Marshal(value); err != nil {
+		t.Fatalf("expected json but got %v", value)
+	}
 }

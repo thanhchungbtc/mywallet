@@ -3,6 +3,8 @@ package app
 import (
 	"net/http"
 
+	"github.com/thanhchungbtc/mywallet/internal/service"
+
 	"github.com/thanhchungbtc/mywallet/internal/app/handler"
 	"github.com/thanhchungbtc/mywallet/internal/database"
 	"github.com/thanhchungbtc/mywallet/internal/model"
@@ -31,6 +33,10 @@ func New() (*App, error) {
 	return a, nil
 }
 
+type Router interface {
+	RegisterRoutes(r gin.IRouter)
+}
+
 func (a *App) setupRouter() {
 	router := gin.Default()
 	a.router = router
@@ -38,10 +44,21 @@ func (a *App) setupRouter() {
 	// setup router
 	a.MountAdmin()
 
-	api := router.Group("/api")
-	handler.NewAccountHandler(a.db).RegisterRoutes(api.Group("/accounts"))
-	handler.NewAuthHandler(a.db).RegisterRoutes(api.Group("/auth"))
+	s := service.New(a.db)
+	apiRouters := []struct {
+		router Router
+		path   string
+	}{
+		{router: handler.NewAuthHandler(a.db), path: "/auth"},
+		{router: handler.NewAccountHandler(a.db), path: "/accounts"},
+		{router: handler.NewCategoryHandler(s), path: "/categories"},
+	}
 
+	api := router.Group("/api")
+	api.Use(withDB(a.db))
+	for _, router := range apiRouters {
+		router.router.RegisterRoutes(api.Group(router.path))
+	}
 }
 
 func (a *App) Migrate() {
@@ -56,6 +73,12 @@ func (a *App) MountAdmin() {
 	adminMux := http.NewServeMux()
 	Admin.MountTo("/admin", adminMux)
 	a.router.Any("/admin/*resources", gin.WrapH(adminMux))
+}
+
+func withDB(db *database.DB) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		ctx.Set("MW_DB", db)
+	}
 }
 
 func (a *App) Run(addr string) error {

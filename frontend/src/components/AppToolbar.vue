@@ -64,7 +64,7 @@
 
     data: () => ({
       mini: false,
-      drawer: true,
+      drawer: false,
       items: [
         {
           icon: 'account_circle',

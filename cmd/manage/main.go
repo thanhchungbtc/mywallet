@@ -20,16 +20,48 @@ func main() {
 		cli.Command{
 			Name:    "migrate",
 			Aliases: []string{"m"},
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "fresh",
+					Usage: "Make fresh migration",
+				},
+			},
 			Action: func(c *cli.Context) error {
 				db, err := database.New()
 				if err != nil {
 					log.Fatal(err)
 				}
+				if c.Bool("fresh") {
+					log.Print("Dropping all tables...")
+					// drop all tables
+					db.DropTableIfExists(model.User{})
+					db.DropTableIfExists(model.Category{})
+					db.DropTableIfExists(model.Account{})
+					db.DropTableIfExists(model.Expense{})
+					log.Print("Dropping tables done")
+				}
+
+				log.Print("Migrating...")
+
 				db.AutoMigrate(model.User{})
 				db.AutoMigrate(model.Category{})
 				db.AutoMigrate(model.Account{})
 				db.AutoMigrate(model.Expense{})
+
+				log.Print("Migration done")
 				return nil
+			},
+		},
+		cli.Command{
+			Name: "seed",
+			Action: func(c *cli.Context) {
+				//db, err := database.New()
+				//if err != nil {
+				//	log.Fatal(err)
+				//}
+				//user := model.User{
+				//	Username: "admin",
+				//}
 			},
 		},
 	}
