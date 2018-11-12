@@ -60,6 +60,7 @@ func (a *App) setupRouter() {
 		{router: handler.NewAuthHandler(s), path: "/auth"},
 		{router: handler.NewAccountHandler(a.db), path: "/accounts"},
 		{router: handler.NewCategoryHandler(s), path: "/categories"},
+		{router: handler.NewExpenseHandler(s), path: "/expenses"},
 	}
 
 	api := router.Group("/api")

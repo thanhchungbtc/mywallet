@@ -7,19 +7,9 @@ import store from "../store";
 
 Vue.use(Router);
 
-
-const requireGuest = (to, from, next) => {
-  console.log('requireGuest')
-  return !store.getters.isAuthenticated ? next() : next("/")
-}
-const requireAuth = (to, from, next) => {
-  console.log('requireAuth')
-  store.getters.isAuthenticated ? next() : next("/login")
-}
-
 const router = new Router({
   base: '/',
-  mode: 'hash',
+  mode: 'history',
   linkActiveClass: 'active',
   routes: paths
 });

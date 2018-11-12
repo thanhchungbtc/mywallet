@@ -29,7 +29,7 @@
                   <v-text-field label="*Name" v-model="category.name" required></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm12 md12>
-                  <v-text-field label="Balance" v-model="category.balance" type="number"></v-text-field>
+                  <v-text-field label="Budget" v-model="category.budget" type="number"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm12 md12>
                   <v-text-field label="Memo" v-model="category.memo"></v-text-field>
@@ -65,7 +65,7 @@
           <template slot="items" slot-scope="props">
             <td>
               <v-avatar size="36px">
-                <img :src="props.item.avatar" :alt="props.item.username"/>
+                <img :src="props.item.imageUrl" :alt="props.item.username"/>
               </v-avatar>
             </td>
             <td>{{ props.item.name }}</td>
@@ -91,7 +91,6 @@
 
     </v-card-text>
 
-
   </v-card>
 </template>
 
@@ -103,12 +102,12 @@
         defaultCategory: {
           name: '',
           memo: '',
-          balance: '',
+          budget: 0,
         },
         category: {
           name: '',
           memo: '',
-          balance: '',
+          budget: 0,
         },
 
         dialog: false,
@@ -118,7 +117,7 @@
             text: '',
             align: 'center',
             sortable: false,
-            value: 'avatar'
+            value: 'imageUrl'
           },
           {
             text: 'Name',
@@ -146,35 +145,35 @@
       categories() {
         return [
           {
-            avatar: '/images/category/food.png',
+            imageUrl: '/images/category/food.png',
             name: 'Food',
             memo: 'Food',
             progress: 90,
             color: 'pink',
           },
           {
-            avatar: '/images/category/family.png',
+            imageUrl: '/images/category/family.png',
             name: 'Family',
             memo: 'Family',
             progress: 70,
             color: 'success'
           },
           {
-            avatar: '/images/category/baby.JPG',
+            imageUrl: '/images/category/baby.JPG',
             name: 'Baby',
             memo: 'Baby',
             progress: 50,
             color: 'info'
           },
           {
-            avatar: '/images/category/house.png',
+            imageUrl: '/images/category/house.png',
             name: 'House',
             memo: 'House',
             progress: 30,
             color: 'teal'
           },
           {
-            avatar: '/images/category/travel.png',
+            imageUrl: '/images/category/travel.png',
             name: 'Travel',
             memo: 'Travel',
             progress: 15,
@@ -182,7 +181,6 @@
           },
 
         ];
-        return Projects;
       }
     },
 

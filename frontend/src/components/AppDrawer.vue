@@ -83,6 +83,12 @@
           icon: 'category',
           name: 'category',
         },
+        {
+          title: 'Expense',
+          group: 'apps',
+          icon: 'money',
+          name: 'expense',
+        },
       ],
     })
   }

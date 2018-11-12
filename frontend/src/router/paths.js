@@ -1,8 +1,13 @@
 import store from '../store'
 
-
-
-
+const requireGuest = (to, from, next) => {
+  console.log('requireGuest')
+  return !store.getters.isAuthenticated ? next() : next("/")
+}
+const requireAuth = (to, from, next) => {
+  console.log('requireAuth')
+  store.getters.isAuthenticated ? next() : next("/login")
+}
 
 export default [
 
@@ -57,11 +62,8 @@ export default [
       public: true,
     },
     name: 'login',
-    component: () => import(
-      /* webpackChunkName: "routes" */
-      /* webpackMode: "lazy-once" */
-      `@/views/Login.vue`
-      ),
+    component: () => import(`@/views/Login.vue`),
+    beforeEnter: requireGuest,
   },
   {
     path: '/register',
@@ -90,6 +92,12 @@ export default [
     meta: {breadcrumb: true},
     name: 'category',
     component: () => import(`@/views/Category.vue`),
+  },
+  {
+    path: '/expenses',
+    meta: {breadcrumb: true},
+    name: 'expense',
+    component: () => import(`@/views/Expense/Expense.vue`),
   },
 
 ];

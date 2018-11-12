@@ -12,6 +12,7 @@ type Service struct {
 	Category Category
 	User     User
 	Auth     Auth
+	Expense  Expense
 }
 
 func New(DB *database.DB) *Service {
@@ -20,6 +21,7 @@ func New(DB *database.DB) *Service {
 		Category: &category{DB},
 		User:     &user{DB},
 		Auth:     &auth{DB},
+		Expense:  &expense{DB},
 	}
 
 	return s

@@ -8,9 +8,9 @@ const mutations = {
   loginSuccess(state, user) {
     state.user = user
   },
-  verifySuccess(state, user) {
+  tokenValid(state, user) {
     state.user = user
-  }
+  },
 }
 
 const actions = {
@@ -20,9 +20,14 @@ const actions = {
     })
   },
 
-  async verify({commit}) {
-    const res = await Auth.verifyToken()
-    commit('verifySuccess', res)
+  async verify({commit, dispatch}) {
+    try {
+      const res = await Auth.verifyToken()
+      commit('tokenValid', res)
+    } catch (e) {
+      console.log(e)
+      dispatch('auth/logout')
+    }
   },
   async logout({commit}) {
     return await Auth.logout()

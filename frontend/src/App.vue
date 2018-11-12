@@ -35,21 +35,20 @@
     },
 
     data: () => ({
-      booting: true,
+      booting: false,
     }),
 
     created() {
-      console.log('hit')
-      this.$store.dispatch('auth/verify')
-        .then(() => {
-          this.$router.push({name: 'dashboard'})
-          this.booting = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.$store.dispatch('auth/logout')
-          this.booting = false
-        })
+      // console.log('hit')
+      // this.$store.dispatch('auth/verify')
+      //   .then(() => {
+      //     this.booting = false
+      //   })
+      //   .catch(err => {
+      //     console.log(err)
+      //     this.$store.dispatch('auth/logout')
+      //     this.booting = false
+      //   })
 
     },
   }
