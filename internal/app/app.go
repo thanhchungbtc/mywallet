@@ -3,6 +3,8 @@ package app
 import (
 	"net/http"
 
+	"github.com/gin-contrib/cors"
+
 	"github.com/thanhchungbtc/mywallet/internal/service"
 
 	"github.com/thanhchungbtc/mywallet/internal/app/handler"
@@ -41,6 +43,12 @@ func (a *App) setupRouter() {
 	router := gin.Default()
 	a.router = router
 
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		AllowHeaders:    []string{"Content-Type", "Authorization"},
+		AllowMethods:    []string{"*"},
+	}))
+
 	// setup router
 	a.MountAdmin()
 
@@ -55,7 +63,7 @@ func (a *App) setupRouter() {
 	}
 
 	api := router.Group("/api")
-	api.Use(withDB(a.db))
+
 	for _, router := range apiRouters {
 		router.router.RegisterRoutes(api.Group(router.path))
 	}
@@ -73,12 +81,6 @@ func (a *App) MountAdmin() {
 	adminMux := http.NewServeMux()
 	Admin.MountTo("/admin", adminMux)
 	a.router.Any("/admin/*resources", gin.WrapH(adminMux))
-}
-
-func withDB(db *database.DB) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		ctx.Set("MW_DB", db)
-	}
 }
 
 func (a *App) Run(addr string) error {

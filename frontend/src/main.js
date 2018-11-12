@@ -27,7 +27,6 @@ Vue.use(Vuetify, {
   }
 });
 
-
 new Vue({
   store,
   router,

@@ -3,12 +3,22 @@ import Vuex from 'vuex'
 
 import auth from './modules/auth'
 import app from './modules/app'
+import getters from './getters'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   modules: {
-    app,
-    auth
+    app: {
+      namespaced: true,
+      ...app,
+    },
+    auth:{
+      namespaced: true,
+      ...auth,
+    }
   },
+  getters,
 })
+
+export default store

@@ -13,6 +13,7 @@
     "material-design-icons-iconfont": "^4.0.2",
     "moment": "^2.22.2",
     "nprogress": "^0.2.0",
+    "pubsub-js": "^1.7.0",
     "vue": "^2.5.17",
     "vue-perfect-scrollbar": "^0.1.0",
     "vue-router": "^3.0.1",

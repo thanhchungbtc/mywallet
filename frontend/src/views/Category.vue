@@ -25,6 +25,10 @@
       return {
         dialog: false,
       }
+    },
+    created() {
+
+
     }
   }
 </script>

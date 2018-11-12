@@ -3,6 +3,8 @@ package handler
 import (
 	"regexp"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/thanhchungbtc/mywallet/internal/model"
 
 	"github.com/thanhchungbtc/mywallet/internal/service"
@@ -32,6 +34,7 @@ func (h *AuthHandler) RegisterRoutes(r gin.IRouter) {
 
 	sub := r.Group("")
 	sub.Use(h.withAuth).
+		POST("/verify-token", h.verifyToken).
 		POST("/profile", h.profile)
 
 }
@@ -102,10 +105,24 @@ func (h *AuthHandler) withAuth(c *gin.Context) {
 }
 
 func (h *AuthHandler) profile(c *gin.Context) {
-	auth, ok := c.MustGet(authKey).(*service.Claims)
+	_, ok := c.MustGet(authKey).(*service.Claims)
 	if !ok {
 		abortUnauthorize(c)
 		return
 	}
-	c.JSON(200, auth)
+	c.JSON(200, gin.H{})
+}
+
+func (h *AuthHandler) verifyToken(c *gin.Context) {
+	claims, ok := c.MustGet(authKey).(*service.Claims)
+	if !ok {
+		abortUnauthorize(c)
+		return
+	}
+	tokenStr, _ := c.MustGet(tokenKey).(string)
+
+	c.JSON(200, serializer.NewAuthResponse(tokenStr, &model.User{
+		Model:    gorm.Model{ID: claims.User.UserID},
+		Username: claims.User.Username,
+	}))
 }

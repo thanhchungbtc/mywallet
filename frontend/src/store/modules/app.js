@@ -1,5 +1,9 @@
 const state = {
-  drawer: true,
+  snackbar: {
+    show: false,
+    text: '',
+    color: '',
+  }
 }
 
 const mutations = {
@@ -7,9 +11,33 @@ const mutations = {
 }
 
 const actions = {
-  APP_DRAWER_TOGGLE({state}) {
-    state.drawer = !state.drawer
-  }
+  showSnackbar({state}, val) {
+    state.snackbar.show = val
+  },
+
+  error({state}, message) {
+    state.snackbar = {
+      show: true,
+      text: message,
+      color: 'error',
+    }
+  },
+  success({state}, message) {
+    state.snackbar = {
+      show: true,
+      text: message,
+      color: 'success',
+    }
+  },
+  info({state}, message) {
+    state.snackbar = {
+      show: true,
+      text: message,
+      color: 'info',
+    }
+  },
+
+
 }
 
 export default {

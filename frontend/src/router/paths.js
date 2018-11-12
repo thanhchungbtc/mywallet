@@ -1,3 +1,9 @@
+import store from '../store'
+
+
+
+
+
 export default [
 
   {
@@ -55,11 +61,19 @@ export default [
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
       `@/views/Login.vue`
-      )
+      ),
+  },
+  {
+    path: '/register',
+    meta: {
+      public: true,
+    },
+    name: 'register',
+    component: () => import(`@/views/Register.vue`),
   },
   {
     path: '/',
-    meta: { },
+    meta: {},
     name: 'root',
     redirect: {
       name: 'dashboard'
@@ -67,19 +81,15 @@ export default [
   },
   {
     path: '/dashboard',
-    meta: { breadcrumb: true },
+    meta: {breadcrumb: true},
     name: 'dashboard',
-    component: () => import(
-      `@/views/Dashboard.vue`
-      )
+    component: () => import(`@/views/Dashboard.vue`),
   },
   {
     path: '/categories',
-    meta: { breadcrumb: true },
+    meta: {breadcrumb: true},
     name: 'category',
-    component: () => import(
-      `@/views/Category.vue`
-      )
+    component: () => import(`@/views/Category.vue`),
   },
 
 ];

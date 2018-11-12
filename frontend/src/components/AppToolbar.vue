@@ -87,7 +87,6 @@
           href: '#',
           title: 'Logout',
           click: (e) => {
-            window.getApp.$emit('APP_LOGOUT');
           }
         }
       ],

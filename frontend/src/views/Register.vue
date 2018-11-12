@@ -8,18 +8,22 @@
               <v-card-text>
                 <div class="layout column align-center">
                   <img :src="logo" alt="Vue Material Admin" width="120" height="120">
-                  <h1 class="flex my-4 primary--text">Login to My Wallet</h1>
+                  <h1 class="flex my-4 primary--text">Welcome to mywallet</h1>
                 </div>
                 <v-form>
-                  <v-text-field append-icon="person" name="login" label="Login" type="text"
-                                v-model="credentials.username"></v-text-field>
+                  <v-text-field append-icon="person" name="username" label="Username" type="text"
+                                v-model="model.username"></v-text-field>
+                  <v-text-field append-icon="email" name="email" label="Email" type="email"
+                                v-model="model.email"></v-text-field>
                   <v-text-field append-icon="lock" name="password" label="Password" id="password" type="password"
-                                v-model="credentials.password"></v-text-field>
+                                v-model="model.password"></v-text-field>
+                  <v-text-field append-icon="lock" name="password_confirmation" label="Password confirmation"
+                                id="password_confirmation" type="password"
+                                v-model="model.password_confirmation"></v-text-field>
                 </v-form>
               </v-card-text>
               <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn block color="primary" @click="login" :loading="loading">Login</v-btn>
+                <v-btn block color="primary" @click="register" :loading="loading">Register</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -33,9 +37,11 @@
   export default {
     data: () => ({
       loading: false,
-      credentials: {
+      model: {
         username: '',
-        password: ''
+        email: '',
+        password: '',
+        password_confirmation: ''
       }
     }),
 
@@ -49,14 +55,12 @@
     methods: {
       login() {
         this.loading = true
-        this.$store.dispatch('auth/login', this.credentials)
+        this.$store.dispatch('register', this.model)
           .then(() => {
             this.loading = false
             this.$router.push({name: 'dashboard'})
-            this.$store.dispatch('app/success', 'Welcome back')
           })
           .catch(err => {
-            console.log(err)
             this.loading = false
             this.$store.dispatch('app/error', err.error)
           })
