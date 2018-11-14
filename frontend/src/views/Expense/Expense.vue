@@ -10,6 +10,10 @@
             <!--Dialog-->
             <v-toolbar card dense color="transparent">
               <v-toolbar-title><h4>Expense list</h4></v-toolbar-title>
+              <v-btn slot="activator" color="primary" flat icon>
+                <v-icon>add</v-icon>
+              </v-btn>
+
               <v-spacer></v-spacer>
 
               <v-dialog v-model="dialog" persistent max-width="500px">
@@ -52,6 +56,7 @@
                   </v-card-actions>
 
                 </v-card>
+
               </v-dialog>
 
             </v-toolbar>

@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/thanhchungbtc/mywallet/internal/model"
+	"github.com/thanhchungbtc/mywallet/internal/app/model"
 
 	"github.com/thanhchungbtc/mywallet/internal/database"
 

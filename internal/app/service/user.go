@@ -1,8 +1,8 @@
 package service
 
 import (
+	"github.com/thanhchungbtc/mywallet/internal/app/model"
 	"github.com/thanhchungbtc/mywallet/internal/database"
-	"github.com/thanhchungbtc/mywallet/internal/model"
 )
 
 type User interface {

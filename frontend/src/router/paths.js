@@ -99,5 +99,11 @@ export default [
     name: 'expense',
     component: () => import(`@/views/Expense/Expense.vue`),
   },
+  {
+    path: '/expenses/create',
+    meta: {breadcrumb: true},
+    name: 'expense_create',
+    component: () => import(`@/views/Expense/ExpenseForm.vue`),
+  },
 
 ];

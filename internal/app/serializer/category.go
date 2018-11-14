@@ -2,7 +2,7 @@ package serializer
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/thanhchungbtc/mywallet/internal/model"
+	"github.com/thanhchungbtc/mywallet/internal/app/model"
 )
 
 type CategoryRequest struct {

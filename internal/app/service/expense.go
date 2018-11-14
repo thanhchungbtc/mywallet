@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
+	"github.com/thanhchungbtc/mywallet/internal/app/model"
 	"github.com/thanhchungbtc/mywallet/internal/database"
-	"github.com/thanhchungbtc/mywallet/internal/model"
 )
 
 type Expense interface {

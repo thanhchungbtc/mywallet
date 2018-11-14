@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/thanhchungbtc/mywallet/internal/app"
 )
@@ -11,6 +13,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Listening on port ...")
-	log.Fatal(a.Run(":3000"))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+	log.Printf(fmt.Sprintf("Listening on port %s ...", port))
+	log.Fatal(a.Run(fmt.Sprintf(":%s", port)))
 }

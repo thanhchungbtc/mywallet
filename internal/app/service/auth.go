@@ -7,8 +7,8 @@ import (
 
 	"github.com/fragmenta/mux/log"
 
+	"github.com/thanhchungbtc/mywallet/internal/app/model"
 	"github.com/thanhchungbtc/mywallet/internal/database"
-	"github.com/thanhchungbtc/mywallet/internal/model"
 	"golang.org/x/crypto/bcrypt"
 )
 

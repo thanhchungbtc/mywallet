@@ -5,9 +5,9 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	"github.com/thanhchungbtc/mywallet/internal/model"
+	"github.com/thanhchungbtc/mywallet/internal/app/model"
 
-	"github.com/thanhchungbtc/mywallet/internal/service"
+	"github.com/thanhchungbtc/mywallet/internal/app/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/thanhchungbtc/mywallet/internal/app/serializer"
