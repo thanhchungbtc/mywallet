@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/thanhchungbtc/mywallet/internal/app/model"
+	"github.com/thanhchungbtc/mywallet/server/app/model"
 )
 
 type ExpenseRequest struct {

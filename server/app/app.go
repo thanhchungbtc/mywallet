@@ -5,11 +5,11 @@ import (
 
 	"github.com/gin-contrib/cors"
 
-	"github.com/thanhchungbtc/mywallet/internal/app/service"
+	"github.com/thanhchungbtc/mywallet/server/app/service"
 
-	"github.com/thanhchungbtc/mywallet/internal/app/handler"
-	"github.com/thanhchungbtc/mywallet/internal/app/model"
-	"github.com/thanhchungbtc/mywallet/internal/database"
+	"github.com/thanhchungbtc/mywallet/server/app/handler"
+	"github.com/thanhchungbtc/mywallet/server/app/model"
+	"github.com/thanhchungbtc/mywallet/server/database"
 
 	"github.com/gin-gonic/gin"
 	"github.com/qor/admin"

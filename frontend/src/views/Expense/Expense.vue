@@ -7,57 +7,13 @@
           <!--Expense list-->
           <v-card>
 
-            <!--Dialog-->
             <v-toolbar card dense color="transparent">
               <v-toolbar-title><h4>Expense list</h4></v-toolbar-title>
-              <v-btn slot="activator" color="primary" flat icon>
-                <v-icon>add</v-icon>
-              </v-btn>
 
               <v-spacer></v-spacer>
-
-              <v-dialog v-model="dialog" persistent max-width="500px">
-
-                <v-btn slot="activator" color="primary" flat icon>
-                  <v-icon>add</v-icon>
-                </v-btn>
-
-                <v-card>
-
-                  <v-card-title>
-                    <span class="headline">{{ formTitle }}</span>
-                  </v-card-title>
-
-                  <v-divider></v-divider>
-
-                  <v-card-text>
-                    <v-container grid-list-md>
-                      <v-layout wrap>
-                        <v-flex xs12 sm12 md12>
-                          <date-picker></date-picker>
-                        </v-flex>
-                        <v-flex xs12 sm12 md12>
-                          <v-text-field label="Budget" v-model="item.budget" type="number"></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm12 md12>
-                          <v-text-field label="Memo" v-model="item.memo"></v-text-field>
-                        </v-flex>
-
-                      </v-layout>
-                    </v-container>
-
-                    <small>*indicates required field</small>
-                  </v-card-text>
-
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click.native="close">Close</v-btn>
-                    <v-btn color="blue darken-1" flat @click.native="dialog = false">Save</v-btn>
-                  </v-card-actions>
-
-                </v-card>
-
-              </v-dialog>
+              <v-btn color="primary" flat icon @click.native="gotoCreate">
+                <v-icon>add</v-icon>
+              </v-btn>
 
             </v-toolbar>
 
@@ -184,15 +140,10 @@
     },
 
     methods: {
-      edit(item) {
-        this.category = item
-        this.dialog = true
-        this.isUpdate = true
-      },
-      close() {
-        this.dialog = false
-        this.category = {...this.defaultCategory}
+      gotoCreate() {
+        this.$router.push({name: 'expense_create'})
       }
+
     }
   }
 </script>

@@ -7,12 +7,12 @@ import (
 
 	"github.com/stretchr/testify/mock"
 
-	"github.com/thanhchungbtc/mywallet/internal/app/model"
+	"github.com/thanhchungbtc/mywallet/server/app/model"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/thanhchungbtc/mywallet/internal/app/service"
-	"github.com/thanhchungbtc/mywallet/internal/app/service/mocks"
+	"github.com/thanhchungbtc/mywallet/server/app/service"
+	"github.com/thanhchungbtc/mywallet/server/app/service/mocks"
 )
 
 // TestAuthHandler_login

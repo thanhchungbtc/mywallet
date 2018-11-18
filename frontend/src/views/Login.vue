@@ -4,24 +4,26 @@
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
           <v-flex xs12 sm8 md4 lg4>
+            <v-form @submit.prevent="login">
+
             <v-card class="elevation-1 pa-3">
               <v-card-text>
                 <div class="layout column align-center">
                   <img :src="logo" alt="Vue Material Admin" width="120" height="120">
                   <h1 class="flex my-4 primary--text">Login to My Wallet</h1>
                 </div>
-                <v-form>
                   <v-text-field append-icon="person" name="login" label="Login" type="text"
                                 v-model="credentials.username"></v-text-field>
                   <v-text-field append-icon="lock" name="password" label="Password" id="password" type="password"
                                 v-model="credentials.password"></v-text-field>
-                </v-form>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn block color="primary" @click="login" :loading="loading">Login</v-btn>
+                <v-btn type="submit" block color="primary" :loading="loading">Login</v-btn>
               </v-card-actions>
             </v-card>
+            </v-form>
+
           </v-flex>
         </v-layout>
       </v-container>

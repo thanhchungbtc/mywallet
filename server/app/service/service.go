@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/thanhchungbtc/mywallet/internal/database"
+	"github.com/thanhchungbtc/mywallet/server/database"
 )
 
 //type Service interface {

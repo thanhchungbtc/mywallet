@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/thanhchungbtc/mywallet/internal/app"
+	"github.com/thanhchungbtc/mywallet/server/app"
 )
 
 func main() {

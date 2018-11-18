@@ -1,7 +1,7 @@
 package serializer
 
 import (
-	"github.com/thanhchungbtc/mywallet/internal/app/model"
+	"github.com/thanhchungbtc/mywallet/server/app/model"
 )
 
 type LoginRequest struct {

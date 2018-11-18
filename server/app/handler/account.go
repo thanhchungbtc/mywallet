@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
-	"github.com/thanhchungbtc/mywallet/internal/app/model"
-	"github.com/thanhchungbtc/mywallet/internal/database"
+	"github.com/thanhchungbtc/mywallet/server/app/model"
+	"github.com/thanhchungbtc/mywallet/server/database"
 )
 
 type AccountHandler struct {

@@ -16,7 +16,7 @@
         </v-toolbar-title>
       </v-toolbar>
 
-    <app-drawer></app-drawer>
+      <app-drawer></app-drawer>
     </v-navigation-drawer>
 
     <v-toolbar
@@ -40,7 +40,9 @@
           </v-avatar>
         </v-btn>
         <v-list class="pa-0">
-          <v-list-tile v-for="(item,index) in items" :to="!item.href ? { name: item.name } : null" :href="item.href" @click="item.click" ripple="ripple" :disabled="item.disabled" :target="item.target" rel="noopener" :key="index">
+          <v-list-tile v-for="(item,index) in items" :to="!item.href ? { name: item.name } : null" :href="item.href"
+                       @click="item.click" ripple="ripple" :disabled="item.disabled" :target="item.target"
+                       rel="noopener" :key="index">
             <v-list-tile-action v-if="item.icon">
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
@@ -65,31 +67,7 @@
     data: () => ({
       mini: false,
       drawer: false,
-      items: [
-        {
-          icon: 'account_circle',
-          href: '#',
-          title: 'Profile',
-          click: (e) => {
-            console.log(e);
-          }
-        },
-        {
-          icon: 'settings',
-          href: '#',
-          title: 'Settings',
-          click: (e) => {
-            console.log(e);
-          }
-        },
-        {
-          icon: 'fullscreen_exit',
-          href: '#',
-          title: 'Logout',
-          click: (e) => {
-          }
-        }
-      ],
+
     }),
     computed: {
 
@@ -99,12 +77,49 @@
       },
       avatar() {
         return '/images/avatar/btc.jpeg'
+      },
+
+      items() {
+        return [
+          {
+            icon: 'account_circle',
+            href: '#',
+            title: 'Profile',
+            click: (e) => {
+              console.log(e);
+            }
+          },
+          {
+            icon: 'settings',
+            href: '#',
+            title: 'Settings',
+            click: (e) => {
+              console.log(e);
+            }
+          },
+          {
+            icon: 'fullscreen_exit',
+            href: '#',
+            title: 'Logout',
+            click: this.logout
+          }
+        ]
       }
     },
 
     methods: {
       handleDrawerToggle() {
         this.drawer = !this.drawer
+      },
+
+      logout() {
+        this.$store.dispatch('auth/logout')
+          .then(() => {
+            window.location = '/login'
+          })
+          .catch(e => {
+            console.log("ERROR", e)
+          })
       }
     }
   }

@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
-	"github.com/thanhchungbtc/mywallet/internal/app/model"
+	"github.com/thanhchungbtc/mywallet/server/app/model"
 
-	"github.com/thanhchungbtc/mywallet/internal/database"
+	"github.com/thanhchungbtc/mywallet/server/database"
 
 	"github.com/labstack/gommon/log"
 

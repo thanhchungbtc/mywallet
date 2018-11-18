@@ -72,6 +72,7 @@
             <td>{{ props.item.memo }}</td>
             <td class="text-xs-left">
               <v-progress-linear :value="props.item.progress" height="5" :color="props.item.color"></v-progress-linear>
+              <div class="my-3 text-sm-center"><strong class="error--text text--accent-3">$1,000</strong> / <strong class="success--text text--darken-3">$15,000</strong></div>
             </td>
             <td class="text-xs-right">
               <v-btn flat icon color="grey" @click.stop="edit(props.item)">

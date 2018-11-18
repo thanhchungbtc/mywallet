@@ -3,12 +3,12 @@ package service
 import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pkg/errors"
-	"github.com/thanhchungbtc/mywallet/internal/config"
+	"github.com/thanhchungbtc/mywallet/server/config"
 
 	"github.com/fragmenta/mux/log"
 
-	"github.com/thanhchungbtc/mywallet/internal/app/model"
-	"github.com/thanhchungbtc/mywallet/internal/database"
+	"github.com/thanhchungbtc/mywallet/server/app/model"
+	"github.com/thanhchungbtc/mywallet/server/database"
 	"golang.org/x/crypto/bcrypt"
 )
 

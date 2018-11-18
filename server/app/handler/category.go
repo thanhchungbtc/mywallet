@@ -7,11 +7,11 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/thanhchungbtc/mywallet/internal/app/serializer"
-	"github.com/thanhchungbtc/mywallet/internal/app/service"
+	"github.com/thanhchungbtc/mywallet/server/app/serializer"
+	"github.com/thanhchungbtc/mywallet/server/app/service"
 
 	"github.com/gin-gonic/gin"
-	"github.com/thanhchungbtc/mywallet/internal/app/model"
+	"github.com/thanhchungbtc/mywallet/server/app/model"
 )
 
 var (

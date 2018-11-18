@@ -30,7 +30,7 @@ const actions = {
     }
   },
   async logout({commit}) {
-    return await Auth.logout()
+    return Auth.logout()
   },
 }
 
