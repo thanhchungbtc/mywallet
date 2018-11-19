@@ -1,11 +1,11 @@
-package service
+package database
 
 import (
 	"fmt"
 
+	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/thanhchungbtc/mywallet/server/app/model"
-	"github.com/thanhchungbtc/mywallet/server/database"
 )
 
 type Expense interface {
@@ -15,7 +15,7 @@ type Expense interface {
 	Delete(*model.Expense) error
 }
 
-type expense struct{ DB *database.DB }
+type expense struct{ DB *gorm.DB }
 
 func (s expense) Save(expense *model.Expense) error {
 	var category model.Category

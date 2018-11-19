@@ -1,4 +1,4 @@
-package handler
+package api
 
 import (
 	"bytes"
@@ -10,9 +10,9 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/thanhchungbtc/mywallet/server/app/database"
+	"github.com/thanhchungbtc/mywallet/server/app/database/mocks"
 	"github.com/thanhchungbtc/mywallet/server/app/model"
-	"github.com/thanhchungbtc/mywallet/server/app/service"
-	"github.com/thanhchungbtc/mywallet/server/app/service/mocks"
 )
 
 func init() {
@@ -23,7 +23,7 @@ func init() {
 func TestCategoryHandler_list(t *testing.T) {
 
 	type fields struct {
-		service *service.Service
+		service *database.DB
 	}
 	type args struct {
 		c *gin.Context
@@ -42,7 +42,7 @@ func TestCategoryHandler_list(t *testing.T) {
 				On("All").
 				Return(nil, errors.New("any error"))
 
-			mockService := &service.Service{Category: mockCat}
+			mockService := &database.DB{Category: mockCat}
 
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
@@ -61,7 +61,7 @@ func TestCategoryHandler_list(t *testing.T) {
 				On("All").
 				Return([]*model.Category{}, nil)
 
-			mockService := &service.Service{
+			mockService := &database.DB{
 				Category: mockCat,
 			}
 
@@ -82,7 +82,7 @@ func TestCategoryHandler_list(t *testing.T) {
 					{Model: gorm.Model{ID: 1}, Name: "cat1"},
 				}, nil)
 
-			mockService := &service.Service{Category: mockCat}
+			mockService := &database.DB{Category: mockCat}
 
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
@@ -112,7 +112,7 @@ func TestCategoryHandler_list(t *testing.T) {
 // TestCategoryHandler_create
 func TestCategoryHandler_create(t *testing.T) {
 	type fields struct {
-		service *service.Service
+		service *database.DB
 	}
 	type args struct {
 		c *gin.Context
@@ -131,7 +131,7 @@ func TestCategoryHandler_create(t *testing.T) {
 				On("Save", mock.Anything).
 				Return(nil)
 
-			mockService := &service.Service{Category: mockCat}
+			mockService := &database.DB{Category: mockCat}
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 			c.Request = httptest.NewRequest("POST", "/api/category", bytes.NewBuffer([]byte(`
@@ -154,7 +154,7 @@ func TestCategoryHandler_create(t *testing.T) {
 			mockCat.
 				On("Save", mock.Anything).
 				Return(nil)
-			mockService := &service.Service{Category: mockCat}
+			mockService := &database.DB{Category: mockCat}
 
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
@@ -187,7 +187,7 @@ func TestCategoryHandler_create(t *testing.T) {
 
 func TestCategoryHandler_update(t *testing.T) {
 	type fields struct {
-		service *service.Service
+		service *database.DB
 	}
 	type args struct {
 		c *gin.Context
@@ -215,7 +215,7 @@ func TestCategoryHandler_update(t *testing.T) {
 
 func TestCategoryHandler_delete(t *testing.T) {
 	type fields struct {
-		service *service.Service
+		service *database.DB
 	}
 	type args struct {
 		c *gin.Context
@@ -243,7 +243,7 @@ func TestCategoryHandler_delete(t *testing.T) {
 
 func TestCategoryHandler_retrieve(t *testing.T) {
 	type fields struct {
-		service *service.Service
+		service *database.DB
 	}
 	type args struct {
 		c *gin.Context

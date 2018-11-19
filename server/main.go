@@ -5,11 +5,15 @@ import (
 	"log"
 	"os"
 
+	"github.com/thanhchungbtc/mywallet/server/app/database"
+
+	_ "github.com/lib/pq"
 	"github.com/thanhchungbtc/mywallet/server/app"
 )
 
 func main() {
-	a, err := app.New()
+	DB, err := database.New("postgres", "postgres://thanhchungbui@localhost/mywallet?sslmode=disable")
+	a, err := app.New(DB)
 	if err != nil {
 		log.Fatal(err)
 	}

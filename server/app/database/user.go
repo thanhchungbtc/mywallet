@@ -1,8 +1,8 @@
-package service
+package database
 
 import (
+	"github.com/jinzhu/gorm"
 	"github.com/thanhchungbtc/mywallet/server/app/model"
-	"github.com/thanhchungbtc/mywallet/server/database"
 )
 
 type User interface {
@@ -13,7 +13,7 @@ type User interface {
 	Delete(*model.User) error
 }
 
-type user struct{ DB *database.DB }
+type user struct{ DB *gorm.DB }
 
 func (s user) Save(user *model.User) error {
 	return s.DB.Save(user).Error

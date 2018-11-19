@@ -5,11 +5,9 @@ import (
 
 	"github.com/gin-contrib/cors"
 
-	"github.com/thanhchungbtc/mywallet/server/app/service"
-
-	"github.com/thanhchungbtc/mywallet/server/app/handler"
+	"github.com/thanhchungbtc/mywallet/server/app/api"
+	"github.com/thanhchungbtc/mywallet/server/app/database"
 	"github.com/thanhchungbtc/mywallet/server/app/model"
-	"github.com/thanhchungbtc/mywallet/server/database"
 
 	"github.com/gin-gonic/gin"
 	"github.com/qor/admin"
@@ -20,23 +18,15 @@ type App struct {
 	router *gin.Engine
 }
 
-func New() (*App, error) {
-	db, err := database.New()
-	if err != nil {
-		return nil, err
-	}
+func New(DB *database.DB) (*App, error) {
 
 	a := &App{
-		db: db,
+		db: DB,
 	}
 	a.setupRouter()
 
 	a.Migrate()
 	return a, nil
-}
-
-type Router interface {
-	RegisterRoutes(r gin.IRouter)
 }
 
 func (a *App) setupRouter() {
@@ -52,22 +42,7 @@ func (a *App) setupRouter() {
 	// setup router
 	a.MountAdmin()
 
-	s := service.New(a.db)
-	apiRouters := []struct {
-		router Router
-		path   string
-	}{
-		{router: handler.NewAuthHandler(s), path: "/auth"},
-		{router: handler.NewAccountHandler(a.db), path: "/accounts"},
-		{router: handler.NewCategoryHandler(s), path: "/categories"},
-		{router: handler.NewExpenseHandler(s), path: "/expenses"},
-	}
-
-	api := router.Group("/api")
-
-	for _, router := range apiRouters {
-		router.router.RegisterRoutes(api.Group(router.path))
-	}
+	api.New(a.db).RegisterRoutes(router.Group("/api"))
 }
 
 func (a *App) Migrate() {

@@ -1,12 +1,12 @@
-package handler
+package api
 
 import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
+	"github.com/thanhchungbtc/mywallet/server/app/database"
 	"github.com/thanhchungbtc/mywallet/server/app/model"
-	"github.com/thanhchungbtc/mywallet/server/database"
 )
 
 type AccountHandler struct {

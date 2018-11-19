@@ -1,4 +1,4 @@
-package handler
+package api
 
 import (
 	"bytes"
@@ -11,14 +11,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/thanhchungbtc/mywallet/server/app/service"
-	"github.com/thanhchungbtc/mywallet/server/app/service/mocks"
+	"github.com/thanhchungbtc/mywallet/server/app/database"
+	"github.com/thanhchungbtc/mywallet/server/app/database/mocks"
 )
 
 // TestAuthHandler_login
 func TestAuthHandler_login(t *testing.T) {
 	type fields struct {
-		service *service.Service
+		service *database.DB
 	}
 	type args struct {
 		c *gin.Context
@@ -44,7 +44,7 @@ func TestAuthHandler_login(t *testing.T) {
 			mockAuth.
 				On("Login", "foo", "bar").
 				Return(token, user, err)
-			mockService := &service.Service{Auth: mockAuth}
+			mockService := &database.DB{Auth: mockAuth}
 			return testcase{
 				fields:   fields{service: mockService},
 				args:     args{c: c},
@@ -67,7 +67,7 @@ func TestAuthHandler_login(t *testing.T) {
 			mockAuth.
 				On("Login", "foo", "bar").
 				Return(token, user, err)
-			mockService := &service.Service{Auth: mockAuth}
+			mockService := &database.DB{Auth: mockAuth}
 			return testcase{
 				fields:   fields{service: mockService},
 				args:     args{c: c},
@@ -92,7 +92,7 @@ func TestAuthHandler_login(t *testing.T) {
 // TestAuthHandler_register
 func TestAuthHandler_register(t *testing.T) {
 	type fields struct {
-		service *service.Service
+		service *database.DB
 	}
 	type args struct {
 		c *gin.Context
@@ -120,7 +120,7 @@ func TestAuthHandler_register(t *testing.T) {
 			mockAuth.
 				On("Register", mock.Anything).
 				Return(token, err)
-			mockService := &service.Service{Auth: mockAuth}
+			mockService := &database.DB{Auth: mockAuth}
 			return testcase{
 				fields:   fields{service: mockService},
 				args:     args{c: c},
@@ -144,7 +144,7 @@ func TestAuthHandler_register(t *testing.T) {
 			mockAuth.
 				On("Register", mock.Anything).
 				Return(token, err)
-			mockService := &service.Service{Auth: mockAuth}
+			mockService := &database.DB{Auth: mockAuth}
 			return testcase{
 				fields:   fields{service: mockService},
 				args:     args{c: c},
@@ -167,7 +167,7 @@ func TestAuthHandler_register(t *testing.T) {
 
 func TestAuthHandler_profile(t *testing.T) {
 	type fields struct {
-		service *service.Service
+		service *database.DB
 	}
 	type args struct {
 		c *gin.Context

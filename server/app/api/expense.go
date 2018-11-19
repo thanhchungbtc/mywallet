@@ -1,4 +1,4 @@
-package handler
+package api
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/thanhchungbtc/mywallet/server/app/database"
 	"github.com/thanhchungbtc/mywallet/server/app/serializer"
-	"github.com/thanhchungbtc/mywallet/server/app/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/thanhchungbtc/mywallet/server/app/model"
@@ -19,10 +19,10 @@ var (
 )
 
 type ExpenseHandler struct {
-	service *service.Service
+	service *database.DB
 }
 
-func NewExpenseHandler(service *service.Service) *ExpenseHandler {
+func NewExpenseHandler(service *database.DB) *ExpenseHandler {
 	return &ExpenseHandler{service: service}
 }
 

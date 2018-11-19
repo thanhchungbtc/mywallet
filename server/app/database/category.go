@@ -1,8 +1,8 @@
-package service
+package database
 
 import (
+	"github.com/jinzhu/gorm"
 	"github.com/thanhchungbtc/mywallet/server/app/model"
-	"github.com/thanhchungbtc/mywallet/server/database"
 )
 
 type Category interface {
@@ -12,7 +12,7 @@ type Category interface {
 	Delete(*model.Category) error
 }
 
-type category struct{ DB *database.DB }
+type category struct{ DB *gorm.DB }
 
 func (s category) Save(category *model.Category) error {
 	return s.DB.Save(category).Error

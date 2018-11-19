@@ -1,14 +1,14 @@
-package service
+package database
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/thanhchungbtc/mywallet/server/config"
 
 	"github.com/fragmenta/mux/log"
 
 	"github.com/thanhchungbtc/mywallet/server/app/model"
-	"github.com/thanhchungbtc/mywallet/server/database"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -22,7 +22,7 @@ type Auth interface {
 	ParseToken(tokenStr string) (*Claims, error)
 }
 
-type auth struct{ *database.DB }
+type auth struct{ *gorm.DB }
 
 func (s *auth) Login(username, password string) (string, *model.User, error) {
 	var user model.User
