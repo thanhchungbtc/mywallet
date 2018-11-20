@@ -9,7 +9,6 @@ type DB struct {
 	*gorm.DB
 	Category Category
 	User     User
-	Auth     Auth
 	Expense  Expense
 }
 
@@ -25,7 +24,6 @@ func New(driver, databaseURL string) (*DB, error) {
 		DB:       db,
 		Category: &category{db},
 		User:     &user{db},
-		Auth:     &auth{db},
 		Expense:  &expense{db},
 	}
 

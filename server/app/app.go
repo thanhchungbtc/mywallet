@@ -4,13 +4,11 @@ import (
 	"net/http"
 
 	"github.com/gin-contrib/cors"
-
+	"github.com/gin-gonic/gin"
+	"github.com/qor/admin"
 	"github.com/thanhchungbtc/mywallet/server/app/api"
 	"github.com/thanhchungbtc/mywallet/server/app/database"
 	"github.com/thanhchungbtc/mywallet/server/app/model"
-
-	"github.com/gin-gonic/gin"
-	"github.com/qor/admin"
 )
 
 type App struct {
@@ -42,11 +40,17 @@ func (a *App) setupRouter() {
 	// setup router
 	a.MountAdmin()
 
+	//api.New(a.db).RegisterRoutes(router.Group("/api"))
 	api.New(a.db).RegisterRoutes(router.Group("/api"))
 }
 
 func (a *App) Migrate() {
-	a.db.AutoMigrate(model.Account{}, model.Category{}, model.Expense{})
+	a.db.AutoMigrate(
+		model.User{},
+		model.Account{},
+		model.Category{},
+		model.Expense{},
+	)
 }
 
 func (a *App) MountAdmin() {

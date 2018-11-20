@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -12,11 +13,23 @@ import (
 )
 
 func main() {
+	migrate := flag.Bool("migrate", false, "Fresh migration")
+	flag.Parse()
+
 	DB, err := database.New("postgres", "postgres://thanhchungbui@localhost/mywallet?sslmode=disable")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	a, err := app.New(DB)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	if *migrate {
+		a.Migrate()
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3000"

@@ -2,53 +2,60 @@ package model
 
 import (
 	"time"
-
-	"github.com/jinzhu/gorm"
 )
 
+type Model struct {
+	ID        uint       `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
+}
+
 type User struct {
-	gorm.Model
-	Username string `gorm:"unique;not null"`
-	Email    string `gorm:"unique;not null"`
-	Password string `gorm:"unique;not null"`
+	Model
+	Username string `gorm:"unique;not null" json:"username"`
+	Email    string `gorm:"unique;not null" json:"email"`
+	Password string `gorm:"not null" json:"password"`
 }
 
 type Category struct {
-	gorm.Model
-	Name    string `gorm:"unique;not null"`
-	Memo    string `sql:"text;"`
-	Balance int
+	Model
+	Name      string `gorm:"unique;not null" json:"name"`
+	AvatarURL string `json:"avatar_url"`
+	Memo      string `sql:"text;" json:"memo"`
+	Budget    int    `json:"budget"`
 
-	UserID uint
-	User   *User
+	UserID uint  `gorm:"not null" json:"-"`
+	User   *User `json:"-"`
 
-	Expenses []Expense
+	Expenses []Expense `json:"-"`
 }
 type Account struct {
-	gorm.Model
-	Name   string `gorm:"unique;not null"`
-	Memo   string `sql:"text;"`
-	Budget int
+	Model
+	Name      string `gorm:"unique;not null" json:"name"`
+	AvatarURL string `json:"avatar_url"`
+	Memo      string `sql:"text;" json:"memo"`
+	Balance   int    `json:"balance"`
 
-	UserID uint
-	User   *User
+	UserID uint  `gorm:"not null" json:"-"`
+	User   *User `json:"-"`
 
-	Expenses []Expense
+	Expenses []Expense `json:"-"`
 }
 
 type Expense struct {
-	gorm.Model
-	UseDate  time.Time
-	Amount   int
-	Location string
-	Memo     string `sql:"text;"`
+	Model
+	UseDate  time.Time `json:"use_date"`
+	Amount   int       `json:"amount"`
+	Location string    `json:"location"`
+	Memo     string    `sql:"text;" json:"memo"`
 
-	Account   Account
-	AccountID int
+	Account   Account `json:"-"`
+	AccountID int     `json:"account_id"`
 
-	Category   Category
-	CategoryID int
+	Category   Category `json:"-"`
+	CategoryID int      `json:"category_id"`
 
-	UserID uint
-	User   *User
+	UserID uint  `gorm:"not null" json:"-"`
+	User   *User `json:"-"`
 }

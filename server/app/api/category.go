@@ -1,126 +1,79 @@
 package api
 
 import (
-	"fmt"
-	"net/http"
-	"strconv"
-
-	"github.com/pkg/errors"
-
-	"github.com/thanhchungbtc/mywallet/server/app/database"
-	"github.com/thanhchungbtc/mywallet/server/app/serializer"
-
 	"github.com/gin-gonic/gin"
 	"github.com/thanhchungbtc/mywallet/server/app/model"
 )
 
-var (
-	categoryKey = "mw_category"
-)
-
-type CategoryHandler struct {
-	service *database.DB
+type categoryRequest struct {
+	Name string `json:"name" binding:"required"`
+	//AvatarURL string `json:"avatar_url" binding:"required"`
+	Memo   string `json:"memo"`
+	Budget int    `json:"budget"`
 }
 
-func NewCategoryHandler(service *database.DB) *CategoryHandler {
-	return &CategoryHandler{service: service}
+type categoryResponse struct {
+	*model.Category
 }
 
-func (h *CategoryHandler) RegisterRoutes(r gin.IRouter) {
-	r.GET("", h.list)
-	r.POST("", h.create)
-	r.Group("/:id").
-		Use(h.withCategoryByID).
-		GET("", h.retrieve).
-		PUT("", h.update).
-		DELETE("", h.delete)
+func newCategoryResponse(category *model.Category) *categoryResponse {
+	return &categoryResponse{category}
 }
 
-// list handles /GET api/categories
-func (h *CategoryHandler) list(c *gin.Context) {
-	objects, err := h.service.Category.All()
-	if err != nil {
-		abortWithError(c, 400, err)
-		return
+func newCategoryListResponse(categories []*model.Category) []*categoryResponse {
+	res := make([]*categoryResponse, 0)
+	for _, c := range categories {
+		res = append(res, newCategoryResponse(c))
 	}
-
-	c.JSON(200, serializer.NewCategoryListResponse(objects))
+	return res
 }
 
-// create handles /POST /api/categories
-func (h *CategoryHandler) create(c *gin.Context) {
-	var req serializer.CategoryRequest
-	var err error
-	if err = c.ShouldBindJSON(&req); err != nil {
-		abortWithError(c, 400, err)
-		return
-	}
-
-	category := req.ToCategory()
-	if err = h.service.Category.Save(category); err != nil {
-		abortWithError(c, 400, err)
-		return
-	}
-
-	c.JSON(200, serializer.NewCategoryResponse(category))
-}
-
-// withCategoryByID set category with 'categoryKey' to the context
-func (h *CategoryHandler) withCategoryByID(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+// retrieveCategory GET /api/categories/1
+func (a *API) retrieveCategory(c *gin.Context) {
+	var object model.Category
+	userId := mustGetLoginId(c)
+	if err := a.db.
+		Where(map[string]interface{}{
+			"user_id": userId,
+			"id":      c.Param("id"),
+		}).
+		First(&object).Error; err != nil {
 		abortWithError(c, 404, err)
 		return
 	}
-	object, err := h.service.Category.ByID(id)
-	if err != nil {
-		abortWithError(c, 404, err)
-		return
-	}
-	c.Set(categoryKey, &object)
+	c.JSON(200, newCategoryResponse(&object))
 }
 
-// update handles /PUT /api/categories/:id
-func (h *CategoryHandler) update(c *gin.Context) {
-	category := h.mustGetCategory(c)
+// listCategories GET /api/categories
+func (a *API) listCategories(c *gin.Context) {
+	var objects []*model.Category
+	if err := a.db.
+		Where("user_id = ?", mustGetLoginId(c)).
+		Find(&objects).Error; err != nil {
+		abortWithError(c, 400, err)
+		return
+	}
 
-	var req serializer.CategoryRequest
+	c.JSON(200, newCategoryListResponse(objects))
+}
+
+// createCategory POST /api/categories
+func (a *API) createCategory(c *gin.Context) {
+	var req categoryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		abortWithError(c, 400, err)
 		return
 	}
 
-	req.UpdateTo(category)
-
-	if err := h.service.Category.Save(category); err != nil {
+	object := &model.Category{
+		Name:   req.Name,
+		Budget: req.Budget,
+		Memo:   req.Memo,
+		UserID: mustGetLoginId(c),
+	}
+	if err := a.db.Create(object).Error; err != nil {
 		abortWithError(c, 400, err)
 		return
 	}
-	c.JSON(200, serializer.NewCategoryResponse(category))
-}
-
-// delete handles /DELETE /api/categories/:id
-func (h *CategoryHandler) delete(c *gin.Context) {
-	category := h.mustGetCategory(c)
-	if err := h.service.Category.Delete(category); err != nil {
-		abortWithError(c, 400, err)
-		return
-	}
-
-	c.Status(http.StatusNoContent)
-}
-
-// retrieve handles /GET /api/categories/:id
-func (h *CategoryHandler) retrieve(c *gin.Context) {
-	object := h.mustGetCategory(c)
-	c.JSON(200, serializer.NewCategoryResponse(object))
-}
-
-// mustGetCategory is a helper function
-func (h *CategoryHandler) mustGetCategory(c *gin.Context) *model.Category {
-	object, ok := c.MustGet(categoryKey).(*model.Category)
-	if !ok {
-		panic(errors.Wrap(ErrSystemError, fmt.Sprintf("%v is not in the context", categoryKey)))
-	}
-	return object
+	c.JSON(200, newCategoryResponse(object))
 }
