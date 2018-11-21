@@ -81,7 +81,7 @@
           title: 'Category',
           group: 'apps',
           icon: 'category',
-          name: 'category',
+          name: 'category_list',
         },
         {
           title: 'Expense',

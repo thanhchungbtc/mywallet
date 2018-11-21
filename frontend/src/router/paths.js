@@ -63,7 +63,6 @@ export default [
     },
     name: 'login',
     component: () => import(`@/views/Login.vue`),
-    beforeEnter: requireGuest,
   },
   {
     path: '/register',
@@ -90,8 +89,20 @@ export default [
   {
     path: '/categories',
     meta: {breadcrumb: true},
-    name: 'category',
-    component: () => import(`@/views/Category.vue`),
+    name: 'category_list',
+    component: () => import(`@/views/Category/Category.vue`),
+  },
+  {
+    path: '/categories/new',
+    meta: {breadcrumb: true},
+    name: 'category_create',
+    component: () => import(`@/views/Category/CategoryForm.vue`),
+  },
+  {
+    path: '/categories/:id',
+    meta: {breadcrumb: true},
+    name: 'category_edit',
+    component: () => import(`@/views/Category/CategoryForm.vue`),
   },
   {
     path: '/expenses',

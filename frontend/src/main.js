@@ -19,8 +19,7 @@ Vue.use(Vuetify, {
       mainToolbar: {
         color: 'primary',
       },
-      sideToolbar: {
-      },
+      sideToolbar: {},
       sideNav: 'primary',
       mainNav: 'primary lighten-1',
       bodyBg: '',
@@ -34,11 +33,14 @@ Vue.filter('formatDate', function (value) {
   }
 })
 
+
+// vueApp.$mount('#app')
 store.dispatch('auth/verify')
-  .then(() => {
-    new Vue({
+  .finally(() => {
+    const vueApp = new Vue({
       store,
       router,
       render: h => h(App)
-    }).$mount('#app')
+    })
+    vueApp.$mount('#app')
   })

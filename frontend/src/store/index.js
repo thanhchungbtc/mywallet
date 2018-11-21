@@ -16,7 +16,7 @@ const store = new Vuex.Store({
     auth:{
       namespaced: true,
       ...auth,
-    }
+    },
   },
   getters,
 })

@@ -1,6 +1,6 @@
 import Api from './api'
 
-export default class Session {
+class Session {
   constructor(storage) {
     this.storage = storage
   }
@@ -20,3 +20,5 @@ export default class Session {
     Api.defaults.headers.common['Authorization'] = ``
   }
 }
+
+export default new Session(window.localStorage)

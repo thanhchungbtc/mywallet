@@ -38,19 +38,14 @@
       booting: false,
     }),
 
-    created() {
-      // console.log('hit')
-      // this.$store.dispatch('auth/verify')
-      //   .then(() => {
-      //     this.booting = false
-      //   })
-      //   .catch(err => {
-      //     console.log(err)
-      //     this.$store.dispatch('auth/logout')
-      //     this.booting = false
-      //   })
-
-    },
+    // async created() {
+    //   this.booting = true
+    //   try {
+    //     await this.$store.dispatch('auth/verify')
+    //   } catch (e) {
+    //   }
+    //   this.booting = false
+    // },
   }
 </script>
 

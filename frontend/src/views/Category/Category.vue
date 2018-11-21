@@ -4,7 +4,59 @@
       <v-layout row wrap>
         <!--Category list-->
         <v-flex lg12 sm12 xs12>
-          <category-table></category-table>
+          <!--Category list-->
+          <v-card>
+
+            <v-toolbar card dense color="transparent">
+              <v-toolbar-title><h4>Category list</h4></v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" flat icon @click="gotoCreate">
+                <v-icon>add</v-icon>
+              </v-btn>
+            </v-toolbar>
+
+            <v-divider></v-divider>
+
+            <v-card-text class="pa-0">
+              <template>
+                <v-data-table
+                  :headers="headers"
+                  :items="categories"
+                  hide-actions
+                  class="elevation-0"
+                >
+                  <template slot="items" slot-scope="props">
+                    <td>
+                      <v-avatar size="36px">
+                        <img :src="props.item.imageUrl" :alt="props.item.username"/>
+                      </v-avatar>
+                    </td>
+                    <td>{{ props.item.name }}</td>
+                    <td>{{ props.item.memo }}</td>
+                    <td class="text-xs-left">
+                      <v-progress-linear :value="props.item.progress" height="5"
+                                         :color="props.item.color"></v-progress-linear>
+                      <div class="my-3 text-sm-center"><strong class="error--text text--accent-3">$1,000</strong> /
+                        <strong class="success--text text--darken-3">$15,000</strong></div>
+                    </td>
+                    <td class="text-xs-right">
+                      <v-btn flat icon color="grey" @click.stop="edit(props.item.id)">
+                        <v-icon>edit</v-icon>
+                      </v-btn>
+                      <v-btn flat icon color="grey">
+                        <v-icon>delete</v-icon>
+                      </v-btn>
+                    </td>
+                  </template>
+
+                </v-data-table>
+
+              </template>
+
+              <v-divider></v-divider>
+
+            </v-card-text>
+          </v-card>
         </v-flex>
 
       </v-layout>
@@ -13,22 +65,57 @@
 </template>
 
 <script>
-  import VWidget from '../components/VWidget'
-  import CategoryTable from '../components/category/CategoryTable';
+  import VWidget from '../../components/VWidget'
+  import Category from "../../models/Category";
 
   export default {
     components: {
       VWidget,
-      CategoryTable
     },
     data() {
       return {
-        dialog: false,
+        headers: [
+          {
+            text: '',
+            align: 'center',
+            sortable: false,
+            value: 'imageUrl'
+          },
+          {
+            text: 'Name',
+            align: 'left',
+            sortable: true,
+            value: 'name'
+          },
+          {
+            text: 'Memo',
+            align: 'left',
+            sortable: true,
+            value: 'memo'
+          },
+          {text: 'Progress', value: 'progress', sortable: true,},
+          {text: 'Actions', value: 'action', align: 'right', sortable: false,},
+
+        ],
+        categories: [],
       }
     },
-    created() {
+    async created() {
+      try {
+        this.categories = await Category.all()
+      } catch (e) {
 
+      }
+    },
 
-    }
+    methods: {
+      edit(id) {
+        this.$router.push({name: 'category_edit', params: {id: id}})
+      },
+
+      gotoCreate() {
+        this.$router.push({name: 'category_create'})
+      }
+    },
   }
 </script>

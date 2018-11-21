@@ -6,22 +6,22 @@
           <v-flex xs12 sm8 md4 lg4>
             <v-form @submit.prevent="login">
 
-            <v-card class="elevation-1 pa-3">
-              <v-card-text>
-                <div class="layout column align-center">
-                  <img :src="logo" alt="Vue Material Admin" width="120" height="120">
-                  <h1 class="flex my-4 primary--text">Login to My Wallet</h1>
-                </div>
+              <v-card class="elevation-1 pa-3">
+                <v-card-text>
+                  <div class="layout column align-center">
+                    <img :src="logo" alt="Vue Material Admin" width="120" height="120">
+                    <h1 class="flex my-4 primary--text">Login to My Wallet</h1>
+                  </div>
                   <v-text-field append-icon="person" name="login" label="Login" type="text"
                                 v-model="credentials.username"></v-text-field>
                   <v-text-field append-icon="lock" name="password" label="Password" id="password" type="password"
                                 v-model="credentials.password"></v-text-field>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn type="submit" block color="primary" :loading="loading">Login</v-btn>
-              </v-card-actions>
-            </v-card>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn type="submit" block color="primary" :loading="loading">Login</v-btn>
+                </v-card-actions>
+              </v-card>
             </v-form>
 
           </v-flex>
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+
   export default {
     data: () => ({
       loading: false,
@@ -43,25 +44,21 @@
 
     computed: {
       logo() {
-        // return '/images/logo.png'
         return '/images/wallet.png'
       },
     },
 
     methods: {
-      login() {
+      async login() {
         this.loading = true
-        this.$store.dispatch('auth/login', this.credentials)
-          .then(() => {
-            this.loading = false
-            this.$router.push({name: 'dashboard'})
-            this.$store.dispatch('app/success', 'Welcome back')
-          })
-          .catch(err => {
-            console.log(err)
-            this.loading = false
-            this.$store.dispatch('app/error', err.error)
-          })
+        try {
+          await this.$store.dispatch('auth/login', this.credentials)
+          this.$router.push({name: 'dashboard'})
+        } catch (err) {
+          this.$store.dispatch('app/error', err.error)
+        }
+
+        this.loading = false
       }
     }
   }
