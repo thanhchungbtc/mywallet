@@ -6,41 +6,41 @@ import (
 	"github.com/thanhchungbtc/mywallet/server/app/service"
 )
 
-func (a *API) categoryRoutes(r gin.IRouter) {
-	catService := service.NewCategoryService(a.db)
+func (a *API) accountRoutes(r gin.IRouter) {
+	catService := service.NewAccountService(a.db)
 
-	r.GET("", a.listCategories(catService)).
-		POST("", a.createCategory(catService)).
-		GET("/:id", a.retrieveCategory(catService)).
-		DELETE("/:id", a.deleteCategory(catService)).
-		PUT("/:id", a.updateCategory(catService))
+	r.GET("", a.listAccounts(catService)).
+		POST("", a.createAccount(catService)).
+		GET("/:id", a.retrieveAccount(catService)).
+		DELETE("/:id", a.deleteAccount(catService)).
+		PUT("/:id", a.updateAccount(catService))
 }
 
-type categoryRequest struct {
+type accountRequest struct {
 	Name string `json:"name" binding:"required"`
 	//AvatarURL string `json:"avatar_url" binding:"required"`
-	Memo   string `json:"memo"`
-	Budget int    `json:"budget"`
+	Memo    string `json:"memo"`
+	Balance int    `json:"budget"`
 }
 
-type categoryResponse struct {
-	*model.Category
+type accountResponse struct {
+	*model.Account
 }
 
-func newCategoryResponse(category *model.Category) *categoryResponse {
-	return &categoryResponse{category}
+func newAccountResponse(account *model.Account) *accountResponse {
+	return &accountResponse{account}
 }
 
-func newCategoryListResponse(categories []*model.Category) []*categoryResponse {
-	res := make([]*categoryResponse, 0)
-	for _, c := range categories {
-		res = append(res, newCategoryResponse(c))
+func newAccountListResponse(accounts []*model.Account) []*accountResponse {
+	res := make([]*accountResponse, 0)
+	for _, c := range accounts {
+		res = append(res, newAccountResponse(c))
 	}
 	return res
 }
 
-// retrieveCategory GET /api/categories/1
-func (a *API) retrieveCategory(catService *service.CategoryService) gin.HandlerFunc {
+// retrieveAccount GET /api/accounts/1
+func (a *API) retrieveAccount(catService *service.AccountService) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		object, err := catService.FindOne(map[string]interface{}{
@@ -51,12 +51,12 @@ func (a *API) retrieveCategory(catService *service.CategoryService) gin.HandlerF
 			abortWithError(c, 404, err)
 			return
 		}
-		c.JSON(200, newCategoryResponse(object))
+		c.JSON(200, newAccountResponse(object))
 	}
 }
 
-// listCategories GET /api/categories
-func (a *API) listCategories(catService *service.CategoryService) gin.HandlerFunc {
+// listAccounts GET /api/accounts
+func (a *API) listAccounts(catService *service.AccountService) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		objects, err := catService.FindAll("user_id = ?", mustGetLoginId(c))
@@ -64,39 +64,39 @@ func (a *API) listCategories(catService *service.CategoryService) gin.HandlerFun
 			abortWithError(c, 400, err)
 			return
 		}
-		c.JSON(200, newCategoryListResponse(objects))
+		c.JSON(200, newAccountListResponse(objects))
 	}
 }
 
-// createCategory POST /api/categories
-func (a *API) createCategory(catService *service.CategoryService) gin.HandlerFunc {
+// createAccount POST /api/accounts
+func (a *API) createAccount(catService *service.AccountService) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-		var req categoryRequest
+		var req accountRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
 			abortWithError(c, 400, err)
 			return
 		}
 
-		object := &model.Category{
-			Name:   req.Name,
-			Budget: req.Budget,
-			Memo:   req.Memo,
-			UserID: mustGetLoginId(c),
+		object := &model.Account{
+			Name:    req.Name,
+			Balance: req.Balance,
+			Memo:    req.Memo,
+			UserID:  mustGetLoginId(c),
 		}
 		if err := catService.Create(object); err != nil {
 			abortWithError(c, 400, err)
 			return
 		}
-		c.JSON(200, newCategoryResponse(object))
+		c.JSON(200, newAccountResponse(object))
 	}
 }
 
-// updateCategory PUT /api/categories/1
-func (a *API) updateCategory(catService *service.CategoryService) gin.HandlerFunc {
+// updateAccount PUT /api/accounts/1
+func (a *API) updateAccount(catService *service.AccountService) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-		var req categoryRequest
+		var req accountRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
 			abortWithError(c, 400, err)
 			return
@@ -112,20 +112,20 @@ func (a *API) updateCategory(catService *service.CategoryService) gin.HandlerFun
 		}
 
 		instance.Name = req.Name
-		instance.Budget = req.Budget
+		instance.Balance = req.Balance
 		instance.Memo = req.Memo
 
 		if err := catService.Save(instance); err != nil {
 			abortWithError(c, 400, err)
 			return
 		}
-		c.JSON(200, newCategoryResponse(instance))
+		c.JSON(200, newAccountResponse(instance))
 	}
 
 }
 
-// deleteCategory DELETE /api/categories/1
-func (a *API) deleteCategory(catService *service.CategoryService) gin.HandlerFunc {
+// deleteAccount DELETE /api/accounts/1
+func (a *API) deleteAccount(catService *service.AccountService) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		if err := catService.Delete(map[string]interface{}{

@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/appleboy/gin-jwt"
@@ -44,7 +45,10 @@ func AuthMiddleware(db *database.DB) (*jwt.GinJWTMiddleware, error) {
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*model.User); ok {
 				return jwt.MapClaims{
-					AUTH_IDENTITY: v.ID,
+					AUTH_IDENTITY: map[string]interface{}{
+						"id":       v.ID,
+						"username": v.Username,
+					},
 				}
 			}
 			return jwt.MapClaims{}
@@ -67,7 +71,10 @@ func AuthMiddleware(db *database.DB) (*jwt.GinJWTMiddleware, error) {
 			if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 				return "", jwt.ErrFailedAuthentication
 			}
-
+			c.Set(AUTH_IDENTITY, map[string]interface{}{
+				"id":       user.ID,
+				"username": user.Username,
+			})
 			return &user, nil
 		},
 
@@ -84,5 +91,16 @@ func AuthMiddleware(db *database.DB) (*jwt.GinJWTMiddleware, error) {
 		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
 		TokenHeadName: "Token",
 		TimeFunc:      time.Now,
+
+		LoginResponse: func(c *gin.Context, code int, token string, expire time.Time) {
+			user := c.MustGet(AUTH_IDENTITY)
+
+			c.JSON(http.StatusOK, gin.H{
+				"user":   user,
+				"code":   http.StatusOK,
+				"token":  token,
+				"expire": expire.Format(time.RFC3339),
+			})
+		},
 	})
 }

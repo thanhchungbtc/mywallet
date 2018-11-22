@@ -3,7 +3,6 @@ package api
 import (
 	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
-	"github.com/thanhchungbtc/mywallet/server/app/api/middleware"
 	"github.com/thanhchungbtc/mywallet/server/app/model"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -45,39 +44,20 @@ func (a *API) wrapRegister(mw *jwt.GinJWTMiddleware) gin.HandlerFunc {
 		mw.LoginResponse(c, 200, token, expired)
 	}
 }
-func (a *API) register(c *gin.Context) {
-	var req registerRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		abortWithError(c, 400, err)
-		return
-	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-	if err != nil {
-		abortWithError(c, 400, err)
-		return
-	}
-	user := &model.User{
-		Username: req.Username,
-		Password: string(hashedPassword),
-		Email:    req.Email,
-	}
-	if err = a.db.Create(user).Error; err != nil {
-		abortWithError(c, 400, err)
-		return
-	}
+func (a *API) wrapVerifyToken(mw *jwt.GinJWTMiddleware) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var user model.User
+		if err := a.db.Where("id = ?", mustGetLoginId(c)).First(&user).Error; err != nil {
+			abortWithError(c, 400, err)
+			return
+		}
+		token, expired, err := mw.TokenGenerator(user)
+		if err != nil {
+			abortWithError(c, 401, err)
+			return
+		}
 
-}
-
-func (a *API) verifyToken(c *gin.Context) {
-	claims := jwt.ExtractClaims(c)
-
-	var user model.User
-	if err := a.db.Where("id = ?", claims[middleware.AUTH_IDENTITY]).First(&user).Error; err != nil {
-		abortWithError(c, 400, err)
-		return
+		mw.LoginResponse(c, 200, token, expired)
 	}
-	c.JSON(200, gin.H{
-		"user": user,
-	})
 }
