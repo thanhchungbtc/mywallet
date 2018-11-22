@@ -87,7 +87,13 @@
           title: 'Expense',
           group: 'apps',
           icon: 'money',
-          name: 'expense',
+          name: 'expense_list',
+        },
+        {
+          title: 'Account',
+          group: 'apps',
+          icon: 'widgets',
+          name: 'account_list',
         },
       ],
     })

@@ -23,26 +23,39 @@ Api.interceptors.response.use(function (response) {
   return response
 }, function (error) {
   if (console && console.log) {
-    console.log(error)
+    console.log('INTERCEPT ERROR', error)
   }
-  if (error.response) {
-    return Promise.reject(error.response.data)
+  // if (error.response) {
+  //   return Promise.reject(error.response.data)
+  // }
+  // return Promise.reject(error)
 
+  // let errorMessage = 'An error occurred'
+  /*  let code = error.code
+  if (error.response && error.response.data) {
+     let data = error.response.data
+     code = data.code
+     errorMessage = data.message ? data.message : data.error
+   }
+   Event.publish('ajax.end')
+   Event.publish('alert.error', errorMessage)*/
+  if (error.response.status === 401) {
+    store.dispatch('auth/logout')
+      .then(() => {
+        window.local = '/login'
+      })
+    // Api.post('/auth/refresh-token')
+    //   .then(res => {
+    //     console.log('401 login success', res)
+    //     store.commit('loginSuccess', res.data.user)
+    //   })
+    //   .catch(err => {
+    //     console.log('ERROR2', err)
+    //   })
+
+    // window.location = '/'
   }
   return Promise.reject(error)
-  /*  let errorMessage = 'An error occurred'
-    let code = error.code
-    if (error.response && error.response.data) {
-      let data = error.response.data
-      code = data.code
-      errorMessage = data.message ? data.message : data.error
-    }
-    Event.publish('ajax.end')
-    Event.publish('alert.error', errorMessage)
-    if (code === 401) {
-      window.location = '/'
-    }
-    return Promise.reject(error)*/
 })
 
 export const sleep = (ms) => {

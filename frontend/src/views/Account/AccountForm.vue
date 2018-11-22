@@ -1,5 +1,5 @@
 <template>
-  <div id="categoryForm">
+  <div id="accountForm">
     <v-container grid-list-xl fluid>
       <v-layout wrap>
         <v-flex lg12 sm12 xs12>
@@ -18,17 +18,17 @@
 
                   <v-layout row wrap>
                     <v-flex xs12>
-                      <v-text-field v-model="category.name" label="Name" placeholder="Category name"></v-text-field>
+                      <v-text-field v-model="account.name" label="Name" placeholder="Account name"></v-text-field>
                     </v-flex>
 
                     <v-flex xs12>
-                      <v-text-field v-model.number="category.budget" type="number" label="Budget"
-                                    placeholder="Budget for category"></v-text-field>
+                      <v-text-field v-model.number="account.budget" type="number" label="Budget"
+                                    placeholder="Budget for account"></v-text-field>
                     </v-flex>
 
                     <v-flex xs12>
-                      <v-textarea v-model="category.memo" label="Memo"
-                                  placeholder="Description about category"></v-textarea>
+                      <v-textarea v-model="account.memo" label="Memo"
+                                  placeholder="Description about account"></v-textarea>
                     </v-flex>
 
                     <v-btn color="default" :disabled="loading" @click.prevent="back">Cancel</v-btn>
@@ -44,12 +44,12 @@
   </div>
 </template>
 <script>
-  import Category from "../../models/Category";
+  import Account from "../../models/Account";
 
   export default {
     data: () => ({
       loading: false,
-      category: {
+      account: {
         name: '',
         budget: 0,
         memo: '',
@@ -57,7 +57,7 @@
     }),
     computed: {
      formTitle() {
-       return !!this.$route.params.id ? 'Update category' : 'Create category'
+       return !!this.$route.params.id ? 'Update account' : 'Create account'
      }
     },
     async created() {
@@ -65,7 +65,7 @@
       if (id) {
         this.loading = true
         try {
-          this.category = await Category.findByID(id)
+          this.account = await Account.findByID(id)
         } catch (e) {
 
         }
@@ -75,25 +75,25 @@
 
     methods: {
       back() {
-        this.$router.push({name: 'category_list'})
+        this.$router.push({name: 'account_list'})
       },
       async save() {
         const id = this.$route.params.id
         this.loading = true
         if (!id) {
           try {
-            await Category.create(this.category)
-            this.$store.dispatch('app/success', `Category ${this.category.name} created`)
-            this.$router.push({name: 'category_list'})
+            await Account.create(this.account)
+            this.$store.dispatch('app/success', `Account ${this.account.name} created`)
+            this.$router.push({name: 'account_list'})
           } catch (e) {
             const msg = e.error || e.toLocaleString()
             this.$store.dispatch('app/error', 'Error: ' + msg)
           }
         } else {
           try {
-            await Category.update(id, this.category)
-            this.$store.dispatch('app/success', `Category ${this.category.name} updated`)
-            this.$router.push({name: 'category_list'})
+            await Account.update(id, this.account)
+            this.$store.dispatch('app/success', `Account ${this.account.name} updated`)
+            this.$router.push({name: 'account_list'})
           } catch (e) {
             const msg = e.error || e.toLocaleString()
             this.$store.dispatch('app/error', 'Error: ' + msg)

@@ -1,62 +1,64 @@
 <template>
-  <div id="pageExpense">
+  <div id="pageCategory">
     <v-container grid-list-xl fluid>
       <v-layout row wrap>
-
+        <!--Account list-->
         <v-flex lg12 sm12 xs12>
-          <!--Expense list-->
+          <!--Account list-->
           <v-card>
 
             <v-toolbar card dense color="transparent">
-              <v-toolbar-title><h4>Expense list</h4></v-toolbar-title>
+              <v-toolbar-title><h4>Account list</h4></v-toolbar-title>
               <v-btn flat icon color="primary" @click.stop="refresh">
                 <v-icon>refresh</v-icon>
               </v-btn>
               <v-spacer></v-spacer>
-              <v-btn color="primary" flat icon @click.native="gotoCreate">
+              <v-btn color="primary" flat icon @click="gotoCreate">
                 <v-icon>add</v-icon>
               </v-btn>
-
             </v-toolbar>
 
             <v-divider></v-divider>
 
-            <!--table-->
             <v-card-text class="pa-0">
               <template>
                 <v-data-table
                   :headers="headers"
-                  :items="expenses"
+                  :items="accounts"
                   hide-actions
                   class="elevation-0"
                 >
                   <template slot="items" slot-scope="props">
                     <td>
                       <v-avatar size="36px">
-                        <img :src="props.item.image_url" :alt="props.item.username"/>
+                        <img :src="props.item.imageUrl" :alt="props.item.username"/>
                       </v-avatar>
                     </td>
-                    <td>{{ props.item.use_date | formatDate }}</td>
-                    <td>${{ props.item.amount.toLocaleString() }}</td>
-                    <td>{{ props.item.location }}</td>
+                    <td>{{ props.item.name }}</td>
                     <td>{{ props.item.memo }}</td>
+                    <td class="text-xs-left">
+                      <v-progress-linear :value="props.item.progress" height="5"
+                                         :color="props.item.color"></v-progress-linear>
+                      <div class="my-3 text-sm-center"><strong class="error--text text--accent-3">$1,000</strong> /
+                        <strong class="success--text text--darken-3">$15,000</strong></div>
+                    </td>
                     <td class="text-xs-right">
-                      <v-btn flat icon color="grey" @click.stop="edit(props.item)">
+                      <v-btn flat icon color="grey" @click.stop="edit(props.item.id)">
                         <v-icon>edit</v-icon>
                       </v-btn>
-                      <v-btn flat icon color="grey">
+                      <v-btn flat icon color="grey" @click.prevent="deleteItem(props.item.id)">
                         <v-icon>delete</v-icon>
                       </v-btn>
                     </td>
                   </template>
 
                 </v-data-table>
+
               </template>
 
               <v-divider></v-divider>
 
             </v-card-text>
-
           </v-card>
         </v-flex>
 
@@ -67,7 +69,7 @@
 
 <script>
   import VWidget from '../../components/VWidget'
-  import Expense from "../../models/Expense";
+  import Account from "../../models/Account";
 
   export default {
     components: {
@@ -98,7 +100,7 @@
           {text: 'Actions', value: 'action', align: 'right', sortable: false,},
 
         ],
-        expenses: [],
+        accounts: [],
       }
     },
     async created() {
@@ -107,7 +109,7 @@
 
     methods: {
       edit(id) {
-        this.$router.push({name: 'expense_edit', params: {id: id}})
+        this.$router.push({name: 'account_edit', params: {id: id}})
       },
 
       async deleteItem(id) {
@@ -116,9 +118,9 @@
         }
         console.log('delete')
         try {
-          await Expense.delete(id)
-          this.$message.success(`Expense with id: ${id} deleted`)
-          this.expenses = this.expenses.filter(item => item.id !== id)
+          await Account.delete(id)
+          this.$message.success(`Account with id: ${id} deleted`)
+          this.accounts = this.accounts.filter(item => item.id !== id)
         } catch (e) {
           const msg = e.error || e.toLocaleString()
           this.$message.error('Error ' + msg)
@@ -127,7 +129,7 @@
 
       async refresh() {
         try {
-          this.expenses = await Expense.all()
+          this.accounts = await Account.all()
         } catch (e) {
           const msg = e.error || e.toLocaleString()
           this.$message.error("Something when wrong " + msg)
@@ -135,7 +137,7 @@
       },
 
       gotoCreate() {
-        this.$router.push({name: 'expense_create'})
+        this.$router.push({name: 'account_create'})
       }
     },
   }

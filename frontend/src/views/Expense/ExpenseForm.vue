@@ -27,24 +27,24 @@
                     >
                       <v-text-field
                         slot="activator"
-                        v-model="item.use_date"
+                        v-model="expense.use_date"
                         label="Use date"
                         prepend-icon="event"
                         readonly
                       ></v-text-field>
-                      <v-date-picker v-model="item.use_date" @input="menu = false"></v-date-picker>
+                      <v-date-picker v-model="expense.use_date" @input="menu=false"></v-date-picker>
                     </v-menu>
                   </v-flex>
 
                   <v-flex>
-                    <v-text-field v-model="item.amount" label="Amount" type="number"></v-text-field>
+                    <v-text-field v-model.number="expense.amount" label="Amount" type="number"></v-text-field>
                   </v-flex>
                   <v-flex>
                     <v-select
                       item-text="name"
                       item-value="id"
                       :items="categories"
-                      v-model="item.category_id"
+                      v-model="expense.category_id"
                       label="Category">
                     </v-select>
                   </v-flex>
@@ -53,15 +53,15 @@
                       item-text="name"
                       item-value="id"
                       :items="accounts"
-                      v-model="item.account_id"
+                      v-model="expense.account_id"
                       label="Account">
                     </v-select>
                   </v-flex>
                   <v-flex>
-                    <v-text-field v-model="item.location" label="Location"></v-text-field>
+                    <v-text-field v-model="expense.location" label="Location"></v-text-field>
                   </v-flex>
                   <v-flex>
-                    <v-text-field v-model="item.memo" label="Memo"></v-text-field>
+                    <v-text-field v-model="expense.memo" label="Memo"></v-text-field>
                   </v-flex>
 
                 </v-layout>
@@ -69,7 +69,8 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="success" @click.native="handleSubmit">Save</v-btn>
+              <v-btn color="default" @click.native="back">Cancel</v-btn>
+              <v-btn color="success" @click.native="save">Save</v-btn>
             </v-card-actions>
 
           </v-card>
@@ -81,36 +82,72 @@
 </template>
 
 <script>
-  import moment from 'moment'
+  import Expense from "../../models/Expense";
+  import Category from "../../models/Category";
+  import Account from "../../models/Account";
 
   export default {
     data: () => ({
       menu: false,
-      item: {
-        use_date: moment().format('YYYY-MM-DD'),
-        amount: 0,
-        category_id: '',
-        account_id: '',
-        location: '',
-        memo: ''
-      },
-      categories: [
-        {id: 1, name: 'Food'},
-      ],
-      accounts: [
-        {id: 1, name: 'Food'},
-      ],
+      loading: false,
+      categories: [],
+
+      accounts: [],
+      expense: {
+        use_date: '',
+        budget: 0,
+        memo: '',
+      }
     }),
     computed: {
       formTitle() {
-        return this.isUpdate === true ? 'Update Expense' : 'Add Expense'
-      },
-    },
-    methods: {
-      handleSubmit() {
-        console.log(this.item)
+        return !!this.$route.params.id ? 'Update expense' : 'Create expense'
       }
+    },
+    async created() {
+      const id = this.$route.params.id
+      this.categories = await Category.all()
+      this.accounts = await Account.all()
+      if (id) {
+        this.loading = true
+        try {
+          this.expense = await Expense.findByID(id)
+
+        } catch (e) {
+        }
+        this.loading = false
+      }
+    },
+
+    methods: {
+      back() {
+        this.$router.push({name: 'expense_list'})
+      },
+      async save() {
+        const id = this.$route.params.id
+        this.loading = true
+        if (!id) {
+          try {
+            await Expense.create(this.expense)
+            this.$store.dispatch('app/success', `Expense ${this.expense.name} created`)
+            this.$router.push({name: 'expense_list'})
+          } catch (e) {
+            const msg = e.error || e.toLocaleString()
+            this.$store.dispatch('app/error', 'Error: ' + msg)
+          }
+        } else {
+          try {
+            await Expense.update(id, this.expense)
+            this.$store.dispatch('app/success', `Expense ${this.expense.name} updated`)
+            this.$router.push({name: 'expense_list'})
+          } catch (e) {
+            const msg = e.error || e.toLocaleString()
+            this.$store.dispatch('app/error', 'Error: ' + msg)
+          }
+        }
+        this.loading = false
+      }
+
     }
   }
-
 </script>

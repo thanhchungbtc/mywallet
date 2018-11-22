@@ -9,6 +9,9 @@
 
             <v-toolbar card dense color="transparent">
               <v-toolbar-title><h4>Category list</h4></v-toolbar-title>
+              <v-btn flat icon color="primary" @click.stop="refresh">
+                <v-icon>refresh</v-icon>
+              </v-btn>
               <v-spacer></v-spacer>
               <v-btn color="primary" flat icon @click="gotoCreate">
                 <v-icon>add</v-icon>
@@ -43,7 +46,7 @@
                       <v-btn flat icon color="grey" @click.stop="edit(props.item.id)">
                         <v-icon>edit</v-icon>
                       </v-btn>
-                      <v-btn flat icon color="grey">
+                      <v-btn flat icon color="grey" @click.prevent="deleteItem(props.item.id)">
                         <v-icon>delete</v-icon>
                       </v-btn>
                     </td>
@@ -101,16 +104,36 @@
       }
     },
     async created() {
-      try {
-        this.categories = await Category.all()
-      } catch (e) {
-
-      }
+      await this.refresh()
     },
 
     methods: {
       edit(id) {
         this.$router.push({name: 'category_edit', params: {id: id}})
+      },
+
+      async deleteItem(id) {
+        if (!confirm("Are you sure?")) {
+          return
+        }
+        console.log('delete')
+        try {
+          await Category.delete(id)
+          this.$message.success(`Category with id: ${id} deleted`)
+          this.categories = this.categories.filter(item => item.id !== id)
+        } catch (e) {
+          const msg = e.error || e.toLocaleString()
+          this.$message.error('Error ' + msg)
+        }
+      },
+
+      async refresh() {
+        try {
+          this.categories = await Category.all()
+        } catch (e) {
+          const msg = e.error || e.toLocaleString()
+          this.$message.error("Something when wrong " + msg)
+        }
       },
 
       gotoCreate() {

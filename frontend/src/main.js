@@ -33,6 +33,17 @@ Vue.filter('formatDate', function (value) {
   }
 })
 
+Vue.prototype.$message = {
+  error: (msg) => {
+    store.dispatch('app/error', msg)
+  },
+  success: (msg) => {
+    store.dispatch('app/success', msg)
+  },
+  info: (msg) => {
+    store.dispatch('app/info', msg)
+  },
+}
 
 // vueApp.$mount('#app')
 store.dispatch('auth/verify')

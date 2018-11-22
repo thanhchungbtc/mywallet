@@ -93,7 +93,7 @@ export default [
     component: () => import(`@/views/Category/Category.vue`),
   },
   {
-    path: '/categories/new',
+    path: '/categories/create',
     meta: {breadcrumb: true},
     name: 'category_create',
     component: () => import(`@/views/Category/CategoryForm.vue`),
@@ -104,16 +104,42 @@ export default [
     name: 'category_edit',
     component: () => import(`@/views/Category/CategoryForm.vue`),
   },
+
+  {
+    path: '/accounts',
+    meta: {breadcrumb: true},
+    name: 'account_list',
+    component: () => import(`@/views/Account/Account.vue`),
+  },
+  {
+    path: '/accounts/create',
+    meta: {breadcrumb: true},
+    name: 'account_create',
+    component: () => import(`@/views/Account/AccountForm.vue`),
+  },
+  {
+    path: '/accounts/:id',
+    meta: {breadcrumb: true},
+    name: 'account_edit',
+    component: () => import(`@/views/Account/AccountForm.vue`),
+  },
+
   {
     path: '/expenses',
     meta: {breadcrumb: true},
-    name: 'expense',
+    name: 'expense_list',
     component: () => import(`@/views/Expense/Expense.vue`),
   },
   {
     path: '/expenses/create',
     meta: {breadcrumb: true},
     name: 'expense_create',
+    component: () => import(`@/views/Expense/ExpenseForm.vue`),
+  },
+  {
+    path: '/expenses/:id',
+    meta: {breadcrumb: true},
+    name: 'expense_edit',
     component: () => import(`@/views/Expense/ExpenseForm.vue`),
   },
 
