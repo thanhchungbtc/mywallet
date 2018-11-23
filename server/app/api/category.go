@@ -25,10 +25,19 @@ type categoryRequest struct {
 
 type categoryResponse struct {
 	*model.Category
+	TotalExpense int `json:"total_expense"`
 }
 
 func newCategoryResponse(category *model.Category) *categoryResponse {
-	return &categoryResponse{category}
+	totalExp := 0
+	for _, exp := range category.Expenses {
+		totalExp += exp.Amount
+	}
+	res := &categoryResponse{
+		Category:     category,
+		TotalExpense: totalExp,
+	}
+	return res
 }
 
 func newCategoryListResponse(categories []*model.Category) []*categoryResponse {

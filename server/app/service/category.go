@@ -15,13 +15,19 @@ func NewCategoryService(db *database.DB) *CategoryService {
 
 func (s *CategoryService) FindAll(query interface{}, args ...interface{}) ([]*model.Category, error) {
 	var objects []*model.Category
-	err := s.db.Where(query, args).Find(&objects).Error
+	err := s.db.
+		Preload("Expenses").
+		Where(query, args).
+		Find(&objects).Error
 	return objects, err
 }
 
 func (s *CategoryService) FindOne(query interface{}, args ...interface{}) (*model.Category, error) {
 	var instance model.Category
-	err := s.db.Where(query, args).First(&instance).Error
+	err := s.db.
+		Preload("Expenses").
+		Where(query, args).
+		First(&instance).Error
 	return &instance, err
 }
 

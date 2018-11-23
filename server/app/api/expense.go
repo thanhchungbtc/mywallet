@@ -30,10 +30,20 @@ type expenseRequest struct {
 
 type expenseResponse struct {
 	*model.Expense
+	Category struct {
+		Name      string `json:"name"`
+		AvatarURL string `json:"avatar_url"`
+	} `json:"category"`
 }
 
 func newExpenseResponse(expense *model.Expense) *expenseResponse {
-	return &expenseResponse{expense}
+	res := &expenseResponse{
+		Expense: expense,
+	}
+	res.Category.AvatarURL = expense.Category.AvatarURL
+	res.Category.Name = expense.Category.Name
+
+	return res
 }
 
 func newExpenseListResponse(objects []*model.Expense) []*expenseResponse {
@@ -64,7 +74,13 @@ func (a *API) retrieveExpense(expService *service.ExpenseService) gin.HandlerFun
 func (a *API) listExpenses(expService *service.ExpenseService) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-		objects, err := expService.FindAll("user_id = ?", mustGetLoginId(c))
+		filter := map[string]interface{}{
+			"user_id": mustGetLoginId(c),
+		}
+		if cat := c.Query("category"); cat != "" {
+			filter["category_id"] = cat
+		}
+		objects, err := expService.FindAll(filter)
 		if err != nil {
 			abortWithError(c, 400, err)
 			return

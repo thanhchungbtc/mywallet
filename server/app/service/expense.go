@@ -17,6 +17,7 @@ func (s *ExpenseService) FindAll(query interface{}, args ...interface{}) ([]*mod
 	var objects []*model.Expense
 	err := s.db.
 		Where(query, args).
+		Preload("Category").
 		Find(&objects).
 		Error
 	return objects, err
