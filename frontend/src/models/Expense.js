@@ -1,11 +1,30 @@
-import Api, {sleep} from "../core/api";
+import Api from "../core/api";
+import moment from "moment";
 
 export default class Expense {
 
-  static async all() {
+  static map(item) {
+    return {
+      ...item,
+      use_date: moment(item.use_date).format('YYYY-MM-DD')
+    }
+  }
+
+  static async all(filter) {
     try {
-      const response = await Api.get("/expenses")
-      return response.data
+      const response = await Api.get("/expenses", {
+        params: filter
+      })
+      return response.data.map(this.map)
+    }catch (e) {
+      throw e.response.data
+    }
+  }
+
+  static async findByID(id) {
+    try {
+      const response = await Api.get(`/expenses/${id}`)
+      return this.map(response.data)
     } catch (e) {
       throw e.response.data
     }
@@ -18,16 +37,7 @@ export default class Expense {
         use_date: new Date(object.use_date)
       }
       const response = await Api.post('/expenses', payload)
-      return response.data
-    } catch (e) {
-      throw e.response.data
-    }
-  }
-
-  static async findByID(id) {
-    try {
-      const response = await Api.get(`/expenses/${id}`)
-      return response.data
+      return this.map(response.data)
     } catch (e) {
       throw e.response.data
     }
@@ -35,8 +45,12 @@ export default class Expense {
 
   static async update(id, object) {
     try {
-      const response = await Api.put(`/expenses/${id}`, object)
-      return response.data
+      const payload = {
+        ...object,
+        use_date: new Date(object.use_date)
+      }
+      const response = await Api.put(`/expenses/${id}`, payload)
+      return this.map(response.data)
     } catch (e) {
       throw e.response.data
     }

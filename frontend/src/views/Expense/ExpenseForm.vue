@@ -14,7 +14,7 @@
             <v-card-text>
               <v-container grid-list-md>
                 <v-layout wrap>
-                  <v-flex>
+                  <v-flex sm6>
                     <v-menu
                       :close-on-content-click="false"
                       v-model="menu"
@@ -36,11 +36,13 @@
                     </v-menu>
                   </v-flex>
 
-                  <v-flex>
-                    <v-text-field v-model.number="expense.amount" label="Amount" type="number"></v-text-field>
+                  <v-flex sm6>
+                    <v-text-field v-model.number="expense.amount" label="Amount" type="number" prepend-icon="money"></v-text-field>
                   </v-flex>
-                  <v-flex>
+
+                  <v-flex sm6>
                     <v-select
+                      prepend-icon="category"
                       item-text="name"
                       item-value="id"
                       :items="categories"
@@ -48,8 +50,9 @@
                       label="Category">
                     </v-select>
                   </v-flex>
-                  <v-flex>
+                  <v-flex sm6>
                     <v-select
+                      prepend-icon="widgets"
                       item-text="name"
                       item-value="id"
                       :items="accounts"
@@ -57,11 +60,12 @@
                       label="Account">
                     </v-select>
                   </v-flex>
+
                   <v-flex>
-                    <v-text-field v-model="expense.location" label="Location"></v-text-field>
+                    <v-text-field v-model="expense.location" label="Location" prepend-icon="location_on"></v-text-field>
                   </v-flex>
                   <v-flex>
-                    <v-text-field v-model="expense.memo" label="Memo"></v-text-field>
+                    <v-text-field v-model="expense.memo" label="Memo" prepend-icon="note"></v-text-field>
                   </v-flex>
 
                 </v-layout>
@@ -129,7 +133,7 @@
         if (!id) {
           try {
             await Expense.create(this.expense)
-            this.$store.dispatch('app/success', `Expense ${this.expense.name} created`)
+            this.$store.dispatch('app/success', `Expense ${this.expense.id} created`)
             this.$router.push({name: 'expense_list'})
           } catch (e) {
             const msg = e.error || e.toLocaleString()
@@ -138,7 +142,7 @@
         } else {
           try {
             await Expense.update(id, this.expense)
-            this.$store.dispatch('app/success', `Expense ${this.expense.name} updated`)
+            this.$store.dispatch('app/success', `Expense ${this.expense.id} updated`)
             this.$router.push({name: 'expense_list'})
           } catch (e) {
             const msg = e.error || e.toLocaleString()

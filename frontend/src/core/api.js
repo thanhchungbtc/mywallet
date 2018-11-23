@@ -40,10 +40,9 @@ Api.interceptors.response.use(function (response) {
    Event.publish('ajax.end')
    Event.publish('alert.error', errorMessage)*/
   if (error.response.status === 401) {
+    console.log('LOGOUT')
     store.dispatch('auth/logout')
-      .then(() => {
-        window.local = '/login'
-      })
+    window.location = '/login'
     // Api.post('/auth/refresh-token')
     //   .then(res => {
     //     console.log('401 login success', res)

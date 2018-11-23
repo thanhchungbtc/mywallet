@@ -1,6 +1,18 @@
 <template>
   <div id="pageExpense">
     <v-container grid-list-xl fluid>
+      <v-btn
+        class="mb-3 mr-3"
+        color="pink"
+        dark
+        fixed
+        bottom
+        right
+        fab
+        @click.stop="gotoCreate()"
+      >
+        <v-icon>add</v-icon>
+      </v-btn>
       <v-layout row wrap>
 
         <v-flex lg12 sm12 xs12>
@@ -13,9 +25,6 @@
                 <v-icon>refresh</v-icon>
               </v-btn>
               <v-spacer></v-spacer>
-              <v-btn color="primary" flat icon @click.native="gotoCreate">
-                <v-icon>add</v-icon>
-              </v-btn>
 
             </v-toolbar>
 
@@ -33,7 +42,7 @@
                   <template slot="items" slot-scope="props">
                     <td>
                       <v-avatar size="36px">
-                        <img :src="props.item.image_url" :alt="props.item.username"/>
+                        <img :src="props.item.category.avatar_url" :alt="props.item.category.name"/>
                       </v-avatar>
                     </td>
                     <td>{{ props.item.use_date | formatDate }}</td>
@@ -41,10 +50,10 @@
                     <td>{{ props.item.location }}</td>
                     <td>{{ props.item.memo }}</td>
                     <td class="text-xs-right">
-                      <v-btn flat icon color="grey" @click.stop="edit(props.item)">
+                      <v-btn flat icon color="grey" @click.stop="edit(props.item.id)">
                         <v-icon>edit</v-icon>
                       </v-btn>
-                      <v-btn flat icon color="grey">
+                      <v-btn flat icon color="grey" @click.stop="deleteItem(props.item.id)">
                         <v-icon>delete</v-icon>
                       </v-btn>
                     </td>
@@ -77,16 +86,28 @@
       return {
         headers: [
           {
-            text: '',
+            text: 'Category',
             align: 'center',
-            sortable: false,
-            value: 'imageUrl'
+            sortable: true,
+            value: 'category.avatar_url'
           },
           {
-            text: 'Name',
+            text: 'Use date',
             align: 'left',
             sortable: true,
-            value: 'name'
+            value: 'use_date'
+          },
+          {
+            text: 'Amount',
+            align: 'left',
+            sortable: true,
+            value: 'amount'
+          },
+          {
+            text: 'Location',
+            align: 'left',
+            sortable: true,
+            value: 'location'
           },
           {
             text: 'Memo',
@@ -94,9 +115,7 @@
             sortable: true,
             value: 'memo'
           },
-          {text: 'Progress', value: 'progress', sortable: true,},
           {text: 'Actions', value: 'action', align: 'right', sortable: false,},
-
         ],
         expenses: [],
       }
@@ -127,7 +146,7 @@
 
       async refresh() {
         try {
-          this.expenses = await Expense.all()
+          this.expenses = await Expense.all(this.$route.query)
         } catch (e) {
           const msg = e.error || e.toLocaleString()
           this.$message.error("Something when wrong " + msg)

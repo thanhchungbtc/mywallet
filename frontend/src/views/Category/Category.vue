@@ -29,18 +29,25 @@
                   class="elevation-0"
                 >
                   <template slot="items" slot-scope="props">
+                    <tr @click="selectRow(props.item)">
                     <td>
                       <v-avatar size="36px">
-                        <img :src="props.item.imageUrl" :alt="props.item.username"/>
+                        <img :src="props.item.avatar_url" :alt="props.item.name"/>
                       </v-avatar>
                     </td>
                     <td>{{ props.item.name }}</td>
                     <td>{{ props.item.memo }}</td>
-                    <td class="text-xs-left">
-                      <v-progress-linear :value="props.item.progress" height="5"
-                                         :color="props.item.color"></v-progress-linear>
-                      <div class="my-3 text-sm-center"><strong class="error--text text--accent-3">$1,000</strong> /
-                        <strong class="success--text text--darken-3">$15,000</strong></div>
+                    <td>
+                      <v-progress-linear
+                        :value="props.item.total_expense * 100 /props.item.budget"
+                        height="5"
+                        color="red">
+
+                      </v-progress-linear>
+                      <div class="my-3 text-sm-center"><strong class="error--text text--accent-3">${{
+                        props.item.total_expense.toLocaleString() }}</strong> /
+                        <strong class="success--text text--darken-3">${{ props.item.budget.toLocaleString() }}</strong>
+                      </div>
                     </td>
                     <td class="text-xs-right">
                       <v-btn flat icon color="grey" @click.stop="edit(props.item.id)">
@@ -50,6 +57,7 @@
                         <v-icon>delete</v-icon>
                       </v-btn>
                     </td>
+                    </tr>
                   </template>
 
                 </v-data-table>
@@ -138,7 +146,12 @@
 
       gotoCreate() {
         this.$router.push({name: 'category_create'})
-      }
+      },
+
+      selectRow(row) {
+        console.log(row)
+        this.$router.push({name: 'expense_list', query: {'category': row.id}})
+      },
     },
   }
 </script>
